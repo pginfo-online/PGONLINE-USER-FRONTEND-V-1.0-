@@ -1,15 +1,24 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme inline {
+  --color-brand-navy: #111827;
+  --color-brand-purple: #0A4242;
+  /* Custom teal theme applied globally */
+  --color-brand-primary: #0A4242;
+  --color-brand-secondary: #062b2b;
+  /* Explicit primary mapping for all buttons */
+  --color-brand-violet: #7C3AED;
+  --color-brand-blue: #2563EB;
+  --color-brand-green: #10B981;
+  --color-brand-bg: #F8FAFC;
+  --color-brand-white: #FFFFFF;
+
+  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --background: var(--color-brand-bg);
+  --foreground: var(--color-brand-navy);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,7 +29,22 @@
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom utilities */
+@layer utilities {
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
