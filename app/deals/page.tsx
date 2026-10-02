@@ -25,6 +25,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
+import { getBaseApiUrl } from '../../lib/api/apiClient';
 
 export default function DealsPage() {
   const [deals, setDeals] = useState<any[]>([]);
@@ -56,7 +57,7 @@ export default function DealsPage() {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const res = await fetch('https://pgonline-backend-v-1-0.onrender.com/api/v1/cities');
+        const res = await fetch(`${getBaseApiUrl()}/cities`);
         const data = await res.json();
         if (data.success && data.data?.cities) {
           setCitiesData(data.data.cities);
@@ -80,7 +81,7 @@ export default function DealsPage() {
       const selectedCityObj = citiesData.find(c => c.name.toLowerCase() === filters.city.toLowerCase());
       if (selectedCityObj && selectedCityObj._id) {
         try {
-          const res = await fetch(`https://pgonline-backend-v-1-0.onrender.com/api/v1/areas?cityId=${selectedCityObj._id}`);
+          const res = await fetch(`${getBaseApiUrl()}/areas?cityId=${selectedCityObj._id}`);
           const data = await res.json();
           if (data.success && data.data?.areas) {
             const areaNames = data.data.areas.map((a: any) => a.name);
@@ -111,7 +112,7 @@ export default function DealsPage() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch('https://pgonline-backend-v-1-0.onrender.com/api/v1/hot-deal-categories');
+      const res = await fetch(`${getBaseApiUrl()}/hot-deal-categories`);
       const data = await res.json();
       if (data.success) {
         setCategories(data.data?.categories || []);
@@ -125,7 +126,7 @@ export default function DealsPage() {
     setLoading(true);
     setError(null);
     try {
-      let url = 'https://pgonline-backend-v-1-0.onrender.com/api/v1/hot-deals/discover?limit=20';
+      let url = `${getBaseApiUrl()}/hot-deals/discover?limit=20`;
       if (filters.category !== 'all') url += `&category=${filters.category}`;
       if (filters.sort !== '') url += `&sort=${filters.sort}`;
       if (filters.city !== 'All Cities') url += `&city=${encodeURIComponent(filters.city)}`;

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { getBaseApiUrl } from '../lib/api/apiClient';
 
 interface User {
   _id: string;
@@ -39,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(actualUser);
 
         // Fetch fresh profile from /auth/me
-        fetch('https://pgonline-backend-v-1-0.onrender.com/api/v1/auth/me', {
+        fetch(`${getBaseApiUrl()}/auth/me`, {
           headers: { 'Authorization': `Bearer ${storedToken}` }
         })
           .then(res => res.json())

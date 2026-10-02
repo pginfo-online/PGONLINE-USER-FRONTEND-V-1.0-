@@ -29,6 +29,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
+import { getBaseApiUrl } from '../../lib/api/apiClient';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -73,7 +74,7 @@ export default function BuffetsPage() {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const res = await fetch('https://pgonline-backend-v-1-0.onrender.com/api/v1/cities');
+        const res = await fetch(`${getBaseApiUrl()}/cities`);
         const data = await res.json();
         if (data.success && data.data?.cities) {
           setCitiesData(data.data.cities);
@@ -97,7 +98,7 @@ export default function BuffetsPage() {
       const selectedCityObj = citiesData.find(c => c.name.toLowerCase() === filters.city.toLowerCase());
       if (selectedCityObj && selectedCityObj._id) {
         try {
-          const res = await fetch(`https://pgonline-backend-v-1-0.onrender.com/api/v1/areas?cityId=${selectedCityObj._id}`);
+          const res = await fetch(`${getBaseApiUrl()}/areas?cityId=${selectedCityObj._id}`);
           const data = await res.json();
           if (data.success && data.data?.areas) {
             const areaNames = data.data.areas.map((a: any) => a.name);
@@ -120,7 +121,7 @@ export default function BuffetsPage() {
     setError(null);
     try {
       // Build query string
-      let url = 'https://pgonline-backend-v-1-0.onrender.com/api/v1/buffet/discover?limit=20';
+      let url = `${getBaseApiUrl()}/buffet/discover?limit=20`;
       if (filters.city !== 'All Cities') url += `&city=${encodeURIComponent(filters.city)}`;
       if (filters.area !== 'All Areas') url += `&area=${encodeURIComponent(filters.area)}`;
       if (filters.foodType !== 'all') url += `&foodType=${filters.foodType}`;

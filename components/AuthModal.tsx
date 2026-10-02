@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, Phone, User, MapPin, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { getBaseApiUrl } from '../lib/api/apiClient';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -42,7 +43,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setMounted(true);
   }, []);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://pgonline-backend-v-1-0.onrender.com/api/v1";
+  const apiUrl = getBaseApiUrl();
 
   // --- Handlers ---
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

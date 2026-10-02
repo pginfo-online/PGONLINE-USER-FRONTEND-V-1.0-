@@ -29,8 +29,43 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Environment Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+To connect to the live backend, configure the following environment variable:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+NEXT_PUBLIC_API_URL=https://pgonline-backend-v-1-0.onrender.com/api/v1
+```
+
+> **Note:** The application automatically handles URLs with or without trailing slashes and with or without the `/api/v1` path (e.g. `https://pgonline-backend-v-1-0.onrender.com/` will automatically resolve correctly).
+
+## Deploy to Vercel
+
+### Option 1: Via Vercel Dashboard (Recommended)
+
+1. Push your code to your GitHub repository:
+   ```bash
+   git add .
+   git commit -m "feat: prepare user-frontend for vercel deployment"
+   git push origin main
+   ```
+2. Go to [vercel.com/new](https://vercel.com/new).
+3. Import the repository: **`pginfo-online/PGONLINE-USER-FRONTEND-V-1.0-`**.
+4. In the **Configure Project** screen:
+   - **Framework Preset**: Next.js (automatically detected)
+   - **Root Directory**: `./`
+   - **Build Command**: `next build` (default)
+   - **Output Directory**: `.next` (default)
+5. Under **Environment Variables**, add:
+   - **Key**: `NEXT_PUBLIC_API_URL`
+   - **Value**: `https://pgonline-backend-v-1-0.onrender.com/api/v1`
+6. Click **Deploy**.
+
+### Option 2: Via Vercel CLI
+
+```bash
+npm i -g vercel
+vercel
+```
+Follow the interactive prompts and supply `NEXT_PUBLIC_API_URL=https://pgonline-backend-v-1-0.onrender.com/api/v1`.
+

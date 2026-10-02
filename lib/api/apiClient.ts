@@ -28,12 +28,24 @@ export class ApiError extends Error {
   }
 }
 
-const getBaseUrl = (): string => {
-  return (
+export const getBaseApiUrl = (): string => {
+  let url = (
     process.env.NEXT_PUBLIC_API_URL ||
     'https://pgonline-backend-v-1-0.onrender.com/api/v1'
-  ).replace(/\/+$/, '');
+  ).trim().replace(/\/+$/, '');
+
+  if (!url.endsWith('/api/v1')) {
+    if (url.endsWith('/api')) {
+      url = `${url}/v1`;
+    } else {
+      url = `${url}/api/v1`;
+    }
+  }
+  return url;
 };
+
+export const getBaseUrl = getBaseApiUrl;
+
 
 const getAuthToken = (): string | null => {
   if (typeof window === 'undefined') return null;

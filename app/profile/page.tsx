@@ -5,6 +5,7 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
+import { getBaseApiUrl } from '../../lib/api/apiClient';
 import { Loader2, User, Mail, Phone, MapPin, Calendar, CheckCircle2, AlertCircle, ArrowLeft, Users, Building, MapIcon, Sparkles, Check, Download, X, Heart, CalendarRange, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -42,8 +43,8 @@ export default function ProfilePage() {
     setModalData([]);
     try {
       const endpoint = type === 'wishlist' 
-        ? 'https://pgonline-backend-v-1-0.onrender.com/api/v1/lead/my' 
-        : 'https://pgonline-backend-v-1-0.onrender.com/api/v1/visit/my';
+        ? `${getBaseApiUrl()}/lead/my` 
+        : `${getBaseApiUrl()}/visit/my`;
       const res = await fetch(endpoint, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -80,7 +81,7 @@ export default function ProfilePage() {
   const fetchProfile = async () => {
     try {
       setIsFetching(true);
-      const res = await fetch('https://pgonline-backend-v-1-0.onrender.com/api/v1/auth/me', {
+      const res = await fetch(`${getBaseApiUrl()}/auth/me`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -182,7 +183,7 @@ export default function ProfilePage() {
     setSuccessMsg('');
 
     try {
-      const res = await fetch('https://pgonline-backend-v-1-0.onrender.com/api/v1/auth/me', {
+      const res = await fetch(`${getBaseApiUrl()}/auth/me`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
