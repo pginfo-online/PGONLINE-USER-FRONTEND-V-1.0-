@@ -1,62 +1,80 @@
 "use client";
 
+import React from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Home, Clock, Shield, User, Tag } from "lucide-react";
+import { Home, Shield, User, Building, Store } from "lucide-react";
 
 export default function CategorySection() {
   const categories = [
-    { 
-      title: "Nearby PG", 
-      desc: "Find nearby", 
-      icon: <Home className="w-5 h-5 text-[var(--color-brand-primary)]" />,
-      bg: "bg-[var(--color-brand-primary)]/10"
-    },
-    { 
-      title: "Short Stay", 
-      desc: "Flexible stays", 
-      icon: <Clock className="w-5 h-5 text-orange-600" />,
-      bg: "bg-orange-50"
-    },
-    { 
-      title: "PG for Girls", 
-      desc: "Safe & secure", 
+    {
+      title: "PG for Girls",
+      desc: "Safe & verified spaces",
+      href: "/explore?category=pg&gender=female",
       icon: <Shield className="w-5 h-5 text-pink-600" />,
-      bg: "bg-pink-50"
+      bg: "bg-pink-50",
     },
-    { 
-      title: "PG for Boys", 
-      desc: "Comfort stays", 
+    {
+      title: "PG for Boys",
+      desc: "Near IT hubs & colleges",
+      href: "/explore?category=pg&gender=male",
       icon: <User className="w-5 h-5 text-blue-600" />,
-      bg: "bg-blue-50"
+      bg: "bg-blue-50",
     },
-    { 
-      title: "Offers", 
-      desc: "Best deals", 
-      icon: <Tag className="w-5 h-5 text-emerald-600" />,
-      bg: "bg-emerald-50"
+    {
+      title: "Co-Living Hostels",
+      desc: "Community living",
+      href: "/explore?category=pg",
+      icon: <Home className="w-5 h-5 text-emerald-600" />,
+      bg: "bg-emerald-50",
+    },
+    {
+      title: "Rental Flats",
+      desc: "1, 2 & 3 BHK Apartments",
+      href: "/explore?category=residential_rental",
+      icon: <Building className="w-5 h-5 text-purple-600" />,
+      bg: "bg-purple-50",
+    },
+    {
+      title: "Commercial Spaces",
+      desc: "Offices, retail & shops",
+      href: "/explore?category=commercial",
+      icon: <Store className="w-5 h-5 text-amber-600" />,
+      bg: "bg-amber-50",
     },
   ];
 
   return (
-    <section className="py-2">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-nowrap overflow-x-auto pb-6 gap-3 sm:gap-4 hide-scrollbar xl:justify-center">
+    <section className="py-4">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-nowrap overflow-x-auto pb-4 gap-3 sm:gap-4 hide-scrollbar xl:justify-center">
           {categories.map((cat, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="flex-shrink-0 flex items-center gap-3.5 bg-white border border-gray-100 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)] hover:shadow-xl hover:border-gray-200 pr-6 pl-2.5 py-2.5 rounded-2xl cursor-pointer transition-all duration-300 hover:-translate-y-1 group"
+              transition={{ delay: idx * 0.08 }}
+              className="shrink-0"
             >
-              <div className={`w-11 h-11 rounded-[14px] ${cat.bg} flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}>
-                {cat.icon}
-              </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-gray-900 text-[15px] leading-none mb-1.5 group-hover:text-[var(--color-brand-primary)] transition-colors">{cat.title}</span>
-                <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold leading-none">{cat.desc}</span>
-              </div>
+              <Link
+                href={cat.href}
+                className="flex items-center gap-3.5 bg-white border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-slate-300 pr-6 pl-3 py-3 rounded-2xl cursor-pointer transition-all duration-300 hover:-translate-y-1 group"
+              >
+                <div
+                  className={`w-11 h-11 rounded-xl ${cat.bg} flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}
+                >
+                  {cat.icon}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-extrabold text-slate-900 text-sm leading-none mb-1 group-hover:text-[#0A4242] transition-colors">
+                    {cat.title}
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-semibold leading-none">
+                    {cat.desc}
+                  </span>
+                </div>
+              </Link>
             </motion.div>
           ))}
         </div>

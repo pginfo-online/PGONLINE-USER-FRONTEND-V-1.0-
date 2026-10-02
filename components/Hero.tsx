@@ -1,224 +1,214 @@
 "use client";
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+
+import React from "react";
+import { motion } from "framer-motion";
+import { ShieldCheck, Zap, Award, CheckCircle2, MessageCircle, Star, Sparkles } from "lucide-react";
+import UnifiedSearchModule from "./search/UnifiedSearchModule";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-
-const HERO_SLIDES = [
-  {
-    id: "pg-hostel",
-    eyebrow: "VERIFIED CO-LIVING & HOSTELS",
-    title: "Premium Co-Living & Student Hostels",
-    subtitle: "Modern, fully-furnished PG & hostel spaces with high-speed WiFi, security & daily housekeeping.",
-    ctaText: "Explore PGs",
-    ctaLink: "/explore",
-    image: "/assets/images/banner-pg-hostel.jpg",
-    badgeBg: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
-    glowColor: "from-emerald-950/80 via-black/60 to-transparent",
-    buttonBg: "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/30"
-  },
-  {
-    id: "buffets",
-    eyebrow: "EXPLORE DINING SPREADS",
-    title: "Unlimited Feasts & Gourmet Dining",
-    subtitle: "Eat more, pay less. Handcrafted multi-cuisine spreads, tandoori sizzlers & live food counters near you.",
-    ctaText: "Discover Buffets",
-    ctaLink: "/buffets",
-    image: "/assets/images/banner-buffets.jpg",
-    badgeBg: "bg-amber-500/20 text-amber-300 border-amber-500/40",
-    glowColor: "from-amber-950/80 via-black/60 to-transparent",
-    buttonBg: "bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/30"
-  },
-  {
-    id: "deals",
-    eyebrow: "EXCLUSIVE DEALS & DISCOUNTS",
-    title: "Exclusive Offers & Everyday Savings",
-    subtitle: "Save up to 80% on everyday essentials, food, services, shopping & experiences for the PG community.",
-    ctaText: "Explore Deals",
-    ctaLink: "/deals",
-    image: "/assets/images/banner-deals.jpg",
-    badgeBg: "bg-purple-500/20 text-purple-300 border-purple-500/40",
-    glowColor: "from-purple-950/80 via-black/60 to-transparent",
-    buttonBg: "bg-purple-600 hover:bg-purple-700 text-white shadow-purple-600/30"
-  },
-  {
-    id: "circle",
-    eyebrow: "COMMUNITY & SOCIAL HANGOUTS",
-    title: "Social Meetups & Community Hangouts",
-    subtitle: "Network with like-minded students, make lifelong friends, join weekend events & gaming hubs.",
-    ctaText: "Join Circle",
-    ctaLink: "/circle",
-    image: "/assets/images/banner-circle.jpg",
-    badgeBg: "bg-rose-500/20 text-rose-300 border-rose-500/40",
-    glowColor: "from-rose-950/80 via-black/60 to-transparent",
-    buttonBg: "bg-rose-500 hover:bg-rose-600 text-white shadow-rose-500/30"
-  },
-  {
-    id: "jobs",
-    eyebrow: "CAREERS & INTERNSHIPS",
-    title: "Career Opportunities & Tech Roles",
-    subtitle: "Curated fresher jobs, remote tech roles, and verified internships tailored for students & graduates.",
-    ctaText: "Browse Jobs",
-    ctaLink: "/jobs",
-    image: "/assets/images/banner-jobs.jpg",
-    badgeBg: "bg-blue-500/20 text-blue-300 border-blue-500/40",
-    glowColor: "from-blue-950/80 via-black/60 to-transparent",
-    buttonBg: "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/30"
-  },
-];
-
-const DEFAULT_ROOMS = [
-  {
-    title: "Premium Single Room",
-    subtitle: "Ultimate Privacy & Comfort",
-    price: "₹8,500",
-    image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2070&auto=format&fit=crop",
-    _id: "dummy-1"
-  },
-  {
-    title: "Deluxe Twin Sharing",
-    subtitle: "Perfect for Friends",
-    price: "₹6,000",
-    image: "/assets/images/twin-sharing.jpg",
-    _id: "dummy-2"
-  },
-  {
-    title: "Modern Co-living Space",
-    subtitle: "Vibrant Community Living",
-    price: "₹4,500",
-    image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=2069&auto=format&fit=crop",
-    _id: "dummy-3"
-  },
-];
 
 export default function Hero() {
-  const [rooms] = useState(DEFAULT_ROOMS);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [direction, setDirection] = useState(1);
+  const trustHighlights = [
+    { label: "100% Verified Properties", icon: <ShieldCheck className="w-4 h-4 text-emerald-600" /> },
+    { label: "Direct Owner Connect", icon: <Zap className="w-4 h-4 text-teal-600" /> },
+    { label: "Zero Hidden Charges", icon: <Award className="w-4 h-4 text-blue-600" /> },
+  ];
 
-  // Automatic slide every 3.8 seconds continuously
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setDirection(1);
-      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 3800);
-    return () => clearInterval(timer);
-  }, [currentSlide]);
-
-  const nextSlide = () => {
-    setDirection(1);
-    setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-  };
-
-  const prevSlide = () => {
-    setDirection(-1);
-    setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
-  };
-
-  const active = HERO_SLIDES[currentSlide];
+  const stats = [
+    { value: "50K+", label: "Listings", desc: "Verified rooms & flats" },
+    { value: "200+", label: "Cities", desc: "Across India" },
+    { value: "1L+", label: "Happy Tenants", desc: "Discovered homes" },
+    { value: "₹0", label: "Brokerage", desc: "Direct owner options" },
+  ];
 
   return (
-    <section className="relative w-full pb-32 lg:pb-48 bg-[#0a2540] pt-8 overflow-hidden">
-      {/* Background Image Container */}
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-0">
-        <div className="relative w-full h-[450px] sm:h-[480px] lg:h-[530px] rounded-[2.5rem] overflow-hidden shadow-2xl bg-slate-900 group">
-          {/* Animated Background Slides */}
-          <AnimatePresence initial={false} custom={direction}>
-            <motion.div
-              key={active.id}
-              custom={direction}
-              initial={{ x: direction > 0 ? "100%" : "-100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: direction < 0 ? "100%" : "-100%", opacity: 0 }}
-              transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-0"
-            >
-              <img 
-                src={active.image} 
-                alt={active.title}
-                className="w-full h-full object-cover object-center"
-              />
-              {/* Dynamic Gradient Overlays */}
-              <div className={`absolute inset-0 bg-gradient-to-r ${active.glowColor}`} />
-              <div className="absolute inset-0 bg-black/45" />
-            </motion.div>
-          </AnimatePresence>
+    <section className="relative w-full bg-gradient-to-b from-teal-50/40 via-white to-slate-50/80 pt-8 sm:pt-14 pb-16 sm:pb-24 overflow-hidden border-b border-slate-100">
+      {/* Subtle Luminous Background Glows (clean, warm, light mode) */}
+      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-teal-100/30 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-1/3 left-10 w-[400px] h-[400px] bg-blue-100/30 rounded-full blur-3xl pointer-events-none -z-10" />
+
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        
+        {/* Top Split Section: Pitch on Left, Dual Overlapping Photo Showcase on Right */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-10 sm:mb-14">
           
-          {/* Left-Aligned Animated Text Content */}
-          <div className="absolute inset-x-0 top-0 bottom-36 sm:bottom-40 lg:bottom-44 flex flex-col items-start justify-center text-left px-6 sm:px-12 lg:px-20 pt-4 z-10 pointer-events-none">
-            <AnimatePresence mode="wait">
+          {/* Left Column: Headline & Value Proposition */}
+          <div className="lg:col-span-7 flex flex-col items-start text-left">
+            {/* Super Header Badge (Inspired by Screenshot 2026-10-02 062317) */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35 }}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-50 border border-teal-200/80 text-teal-800 text-xs font-extrabold tracking-wide uppercase mb-4"
+            >
+              <span className="w-2 h-2 rounded-full bg-teal-600 animate-pulse" />
+              <span>• Trusted by 1L+ users across India</span>
+            </motion.div>
+
+            {/* Main Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.08 }}
+              className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.12] mb-4 sm:mb-5"
+            >
+              Discover Your{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-700 via-teal-600 to-blue-700">
+                Next Home
+              </span>{" "}
+              Effortlessly
+            </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.16 }}
+              className="text-slate-600 text-base sm:text-lg lg:text-xl font-medium leading-relaxed max-w-2xl mb-6"
+            >
+              Search verified PGs, co-living spaces, rental flats &amp; commercial properties with zero brokerage and instant owner connect.
+            </motion.p>
+
+            {/* Trust Highlights Badges Row */}
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.24 }}
+              className="flex flex-wrap items-center gap-2.5 sm:gap-4 text-xs font-bold text-slate-700 mb-8"
+            >
+              {trustHighlights.map((item, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-1.5 bg-white border border-slate-200/80 px-3 py-1.5 rounded-xl shadow-2xs"
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </div>
+              ))}
+            </motion.div>
+
+            {/* Direct Numbers Strip (50K+ Listings, 200+ Cities, 1L+ Users, 0 Brokerage) */}
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.3 }}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t border-slate-200/70 w-full"
+            >
+              {stats.map((s, idx) => (
+                <div key={idx} className="flex flex-col">
+                  <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none mb-1">
+                    {s.value}
+                  </span>
+                  <span className="text-xs font-bold text-teal-800 leading-tight">
+                    {s.label}
+                  </span>
+                  <span className="text-[11px] text-slate-400 leading-tight hidden sm:block">
+                    {s.desc}
+                  </span>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Right Column: Visual Overlapping Photo Cards (Directly matching Screenshot 2026-10-02 062317) */}
+          <div className="lg:col-span-5 relative flex justify-center lg:justify-end">
+            <div className="relative w-full max-w-[420px] h-[380px] sm:h-[440px]">
+              
+              {/* Card 1: Top Right Overlapping Photo Card */}
               <motion.div
-                key={active.id}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.45, ease: "easeOut" }}
-                className="max-w-3xl pointer-events-auto"
+                initial={{ opacity: 0, y: -20, rotate: 2 }}
+                animate={{ opacity: 1, y: 0, rotate: 3 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="absolute top-0 right-2 w-56 sm:w-64 h-56 sm:h-64 rounded-3xl overflow-hidden shadow-xl border-4 border-white bg-slate-100 group"
               >
-                {/* Main Heading */}
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif text-white tracking-wide leading-tight mb-3 drop-shadow-md">
-                  {active.title}
-                </h1>
-                
-                {/* Subtitle */}
-                <p className="text-white/90 text-xs sm:text-sm lg:text-base font-light tracking-wide leading-relaxed drop-shadow-sm mb-6 max-w-xl">
-                  {active.subtitle}
-                </p>
-
-                {/* CTA Button */}
-                <div className="flex items-center gap-4">
-                  <Link 
-                    href={active.ctaLink}
-                    className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-none font-medium text-xs tracking-widest uppercase transition-all duration-300 border border-white/80 hover:border-white text-white bg-black/20 hover:bg-white hover:text-gray-900 backdrop-blur-sm cursor-pointer shadow-md"
-                  >
-                    <span>{active.ctaText}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                <img
+                  src="/assets/images/twin-sharing.jpg"
+                  alt="Co-living Student Space"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent" />
+                <div className="absolute bottom-3 left-3 right-3 text-white text-xs font-bold drop-shadow-sm">
+                  <span>Furnished Co-Living</span>
                 </div>
               </motion.div>
-            </AnimatePresence>
-          </div>
 
-
-
-        </div>
-
-        {/* Overlapping Room Cards */}
-        <div className="absolute left-0 right-0 -bottom-32 lg:-bottom-40 px-4 sm:px-12 lg:px-24">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 max-w-[960px] mx-auto">
-            {rooms.map((room, idx) => (
-              <motion.div 
-                key={room._id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 + (idx * 0.1) }}
-                className="bg-white shadow-xl flex flex-col"
+              {/* Card 2: Bottom Left Overlapping Photo Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20, rotate: -2 }}
+                animate={{ opacity: 1, y: 0, rotate: -2 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="absolute bottom-4 left-2 w-64 sm:w-72 h-64 sm:h-72 rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100 group"
               >
-                <div className="h-32 sm:h-36 w-full overflow-hidden bg-gray-100">
-                  <img 
-                    src={room.image} 
-                    alt={room.title}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                  />
+                <img
+                  src="/assets/images/hero-banner.jpg"
+                  alt="Premium Luxury Bedroom"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
+
+                {/* Floating Verified Chip on bottom card */}
+                <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-emerald-800 text-[10px] font-extrabold flex items-center gap-1 shadow-sm">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>100% Verified</span>
                 </div>
-                <div className="p-5 sm:p-6 flex flex-col flex-1">
-                  <h3 className="font-serif text-lg sm:text-xl text-gray-800 mb-1 line-clamp-1">{room.title}</h3>
-                  <p className="text-sm text-gray-500 mb-6 line-clamp-1">{room.subtitle}</p>
-                  <div className="flex items-center justify-between mt-auto">
-                    <Link href="/explore" className="bg-[var(--color-brand-primary)] hover:opacity-90 text-white text-xs font-semibold px-4 sm:px-6 py-2.5 tracking-wider uppercase transition-colors text-center inline-block">
-                      View Properties
-                    </Link>
-                    <div className="text-right pl-2">
-                      <p className="text-base sm:text-lg font-serif text-gray-800">{room.price}</p>
-                      <p className="text-[10px] text-gray-400 uppercase tracking-widest">per month</p>
-                    </div>
+
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <div className="flex items-center gap-1 text-amber-300 text-xs mb-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className="w-3 h-3 fill-current" />
+                    ))}
+                    <span className="text-white font-bold ml-1">4.9</span>
                   </div>
+                  <h4 className="text-sm sm:text-base font-extrabold leading-tight">
+                    Premium Managed Flats
+                  </h4>
+                  <p className="text-[11px] text-slate-200">Zero Brokerage Options</p>
                 </div>
               </motion.div>
-            ))}
+
+              {/* Decorative Accent Pill */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="absolute -bottom-2 right-4 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border border-slate-200/80 flex items-center gap-2.5"
+              >
+                <div className="w-8 h-8 rounded-xl bg-teal-100/80 text-teal-800 flex items-center justify-center font-bold">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-black text-slate-900 leading-none">Instant Booking</p>
+                  <p className="text-[10px] text-slate-500 leading-none mt-0.5">Direct Owner Connect</p>
+                </div>
+              </motion.div>
+
+            </div>
           </div>
+
         </div>
+
+        {/* Center/Bottom: Large Unified Search Module */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.35 }}
+          className="relative z-20"
+        >
+          <UnifiedSearchModule />
+        </motion.div>
+
       </div>
+
+      {/* Floating WhatsApp Action Button (Seen in Screenshot 2026-10-02 062317 & 062441) */}
+      <a
+        href="https://wa.me/919876543210?text=Hi%20PGInfo,%20I%20need%20help%20finding%20accommodation"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-40 w-12 sm:w-14 h-12 sm:h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all cursor-pointer group"
+        aria-label="Contact support on WhatsApp"
+      >
+        <MessageCircle className="w-6 sm:w-7 h-6 sm:h-7 fill-current" />
+        <span className="sr-only">Chat on WhatsApp</span>
+      </a>
     </section>
   );
 }

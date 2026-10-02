@@ -11,7 +11,7 @@ interface BuffetCardProps {
 export default function BuffetCard({ buffet, index }: BuffetCardProps) {
   // Define themes based on index for the colorful variations seen in the app
   const themes = [
-    { bg: 'bg-[#fff4ed]', strip: 'bg-[#d9534f]', text: 'text-[#d9534f]', badge: 'bg-[#d9534f]' }, // Orange/Red
+    { bg: 'bg-[#f0fdfa]', strip: 'bg-[#0f766e]', text: 'text-[#0f766e]', badge: 'bg-[#0f766e]' }, // Teal
     { bg: 'bg-[#f4f0ff]', strip: 'bg-[#7c4dff]', text: 'text-[#7c4dff]', badge: 'bg-[#7c4dff]' }, // Purple
     { bg: 'bg-[#ecfdf5]', strip: 'bg-[#10b981]', text: 'text-[#10b981]', badge: 'bg-[#10b981]' }, // Green
     { bg: 'bg-[#fffbeb]', strip: 'bg-[#f59e0b]', text: 'text-[#f59e0b]', badge: 'bg-[#f59e0b]' }, // Yellow

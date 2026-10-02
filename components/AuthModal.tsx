@@ -103,15 +103,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
       // Success
       setSuccess(passwordMode === 'login' ? 'Logged in successfully!' : 'Account created successfully!');
-      
-      // If signed up, and they provided an address, we could theoretically update it via /auth/me here
-      // using data.token, but we'll skip for brevity as it requires the PUT /auth/me route.
 
       // Close modal after success
       setTimeout(() => {
         onClose();
-        router.push('/explore');
-      }, 1500);
+        router.push('/profile');
+      }, 1200);
 
     } catch (err: any) {
       setError(err.message);
@@ -182,14 +179,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       
       if (!res.ok) throw new Error(data.message || 'Invalid OTP');
       
-      // If it's a new user on web, it returns a tempToken. For simplicity here, we assume full login if user object exists.
       if (data.data?.token && data.data?.user) {
         login(data.data.token, data.data.user);
         setSuccess('Verified successfully!');
         setTimeout(() => {
           onClose();
-          router.push('/explore');
-        }, 1500);
+          router.push('/profile');
+        }, 1200);
       } else {
         setError("Account not found. Please create an account with a password first.");
       }
@@ -213,68 +209,68 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         {passwordMode === 'signup' && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input required type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:bg-white outline-none transition-all" placeholder="John Doe" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input required type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-teal-700/30 focus:bg-white outline-none transition-all" placeholder="John Doe" />
               </div>
             </div>
           </motion.div>
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+          <label className="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input required type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:bg-white outline-none transition-all" placeholder="john@example.com" />
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input required type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-teal-700/30 focus:bg-white outline-none transition-all" placeholder="john@example.com" />
           </div>
         </div>
 
         {passwordMode === 'signup' && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-4 overflow-hidden">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Mobile Number</label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:bg-white outline-none transition-all" placeholder="9876543210" />
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-teal-700/30 focus:bg-white outline-none transition-all" placeholder="9876543210" />
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Address</label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input type="text" name="address" value={formData.address} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:bg-white outline-none transition-all" placeholder="123 Main St, City" />
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input type="text" name="address" value={formData.address} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-teal-700/30 focus:bg-white outline-none transition-all" placeholder="123 Main St, City" />
               </div>
             </div>
           </motion.div>
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <label className="block text-xs font-bold text-slate-700 mb-1">Password</label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input required type="password" name="password" value={formData.password} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:bg-white outline-none transition-all" placeholder="••••••••" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input required type="password" name="password" value={formData.password} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-teal-700/30 focus:bg-white outline-none transition-all" placeholder="••••••••" />
           </div>
         </div>
 
-        {error && <p className="text-red-500 text-xs mt-2 bg-red-50 p-2 rounded-md border border-red-100">{error}</p>}
-        {success && <p className="text-green-600 text-xs mt-2 flex items-center gap-1 bg-green-50 p-2 rounded-md border border-green-100"><CheckCircle2 className="w-4 h-4" /> {success}</p>}
+        {error && <p className="text-rose-600 text-xs mt-2 bg-rose-50 p-2.5 rounded-xl border border-rose-100 font-semibold">{error}</p>}
+        {success && <p className="text-emerald-700 text-xs mt-2 flex items-center gap-1 bg-emerald-50 p-2.5 rounded-xl border border-emerald-100 font-bold"><CheckCircle2 className="w-4 h-4" /> {success}</p>}
 
         <button 
           disabled={isLoading}
           type="submit" 
-          className="w-full mt-6 bg-[var(--color-brand-primary)] hover:bg-[var(--color-brand-secondary)] text-white font-medium py-3 rounded-xl transition-all shadow-md shadow-[var(--color-brand-primary)]/20 flex items-center justify-center gap-2 disabled:cursor-not-allowed"
+          className="w-full mt-4 bg-teal-700 hover:bg-teal-800 text-white font-extrabold py-3 rounded-2xl transition-all shadow-md shadow-teal-700/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
         >
           {isLoading ? 'Processing...' : passwordMode === 'login' ? 'Sign In' : 'Create Account'}
           {!isLoading && <ArrowRight className="w-4 h-4" />}
         </button>
       </form>
 
-      <div className="mt-6 text-center text-sm text-gray-600">
+      <div className="mt-5 text-center text-xs text-slate-500 font-medium">
         {passwordMode === 'login' ? (
-          <p>Don't have an account? <button type="button" onClick={() => {setPasswordMode('signup'); setError(null);}} className="text-[var(--color-brand-primary)] font-semibold hover:underline">Sign up</button></p>
+          <p>Don't have an account? <button type="button" onClick={() => {setPasswordMode('signup'); setError(null);}} className="text-teal-700 font-bold hover:underline cursor-pointer">Sign up</button></p>
         ) : (
-          <p>Already have an account? <button type="button" onClick={() => {setPasswordMode('login'); setError(null);}} className="text-[var(--color-brand-primary)] font-semibold hover:underline">Sign in</button></p>
+          <p>Already have an account? <button type="button" onClick={() => {setPasswordMode('login'); setError(null);}} className="text-teal-700 font-bold hover:underline cursor-pointer">Sign in</button></p>
         )}
       </div>
     </motion.div>
@@ -286,53 +282,53 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="flex flex-col h-full justify-center pb-8"
+      className="flex flex-col h-full justify-center pb-6"
     >
       {otpStep === 'send' ? (
-        <form onSubmit={handleSendOtp} className="space-y-6">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-[var(--color-brand-primary)]/10 text-[var(--color-brand-primary)] rounded-full flex items-center justify-center mx-auto mb-4">
-              <ShieldCheck className="w-8 h-8" />
+        <form onSubmit={handleSendOtp} className="space-y-5">
+          <div className="text-center mb-6">
+            <div className="w-14 h-14 bg-teal-50 text-teal-700 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-inner">
+              <ShieldCheck className="w-7 h-7" />
             </div>
-            <h3 className="text-xl font-serif text-gray-900 mb-2">Passwordless Entry</h3>
-            <p className="text-sm text-gray-500">Enter your email or mobile number to receive a one-time passcode.</p>
+            <h3 className="text-lg font-black text-slate-900 mb-1">Instant Sign In</h3>
+            <p className="text-xs text-slate-500">Enter your email or mobile number to receive a one-time passcode.</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email or Mobile Number</label>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Email or Mobile Number</label>
             <div className="relative">
               {contact.includes('@') ? (
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 transition-colors" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               ) : (
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 transition-colors" />
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               )}
               <input 
                 required 
                 type="text" 
                 value={contact} 
                 onChange={(e) => {setContact(e.target.value); setError(null);}} 
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:bg-white outline-none transition-all tracking-wide" 
+                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-teal-700/30 focus:bg-white outline-none transition-all" 
                 placeholder="example@mail.com or 9876543210" 
               />
             </div>
           </div>
 
-          {error && <p className="text-red-500 text-xs text-center bg-red-50 p-2 rounded-md">{error}</p>}
-          {success && <p className="text-green-600 text-xs text-center bg-green-50 p-2 rounded-md">{success}</p>}
+          {error && <p className="text-rose-600 text-xs text-center bg-rose-50 p-2.5 rounded-xl border border-rose-100 font-semibold">{error}</p>}
+          {success && <p className="text-emerald-700 text-xs text-center bg-emerald-50 p-2.5 rounded-xl border border-emerald-100 font-bold">{success}</p>}
 
           <button 
             disabled={isLoading || !contact}
             type="submit" 
-            className="w-full bg-[var(--color-brand-primary)] hover:bg-[var(--color-brand-secondary)] text-white font-medium py-3 rounded-xl transition-all shadow-md shadow-[var(--color-brand-primary)]/20 flex items-center justify-center gap-2 disabled:cursor-not-allowed"
+            className="w-full bg-teal-700 hover:bg-teal-800 text-white font-extrabold py-3.5 rounded-2xl transition-all shadow-md shadow-teal-700/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {isLoading ? 'Sending...' : 'Send OTP'}
           </button>
         </form>
       ) : (
-        <form onSubmit={handleVerifyOtp} className="space-y-6">
-          <div className="text-center mb-8">
-            <h3 className="text-xl font-serif text-gray-900 mb-2">Enter Verification Code</h3>
-            <p className="text-sm text-gray-500">We sent a 4-digit code to <span className="font-semibold text-gray-900">{contact}</span></p>
+        <form onSubmit={handleVerifyOtp} className="space-y-5">
+          <div className="text-center mb-6">
+            <h3 className="text-lg font-black text-slate-900 mb-1">Enter Verification Code</h3>
+            <p className="text-xs text-slate-500">We sent a 4-digit code to <span className="font-bold text-slate-900">{contact}</span></p>
           </div>
 
           <div>
@@ -342,23 +338,23 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               maxLength={4}
               value={otp} 
               onChange={(e) => {setOtp(e.target.value.replace(/\D/g, '')); setError(null);}} 
-              className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-xl text-2xl font-bold tracking-[1em] text-center focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:bg-white outline-none transition-all" 
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xl font-black tracking-[0.8em] text-center focus:ring-2 focus:ring-teal-700/30 focus:bg-white outline-none transition-all" 
               placeholder="••••" 
             />
           </div>
 
-          {error && <p className="text-red-500 text-xs text-center bg-red-50 p-2 rounded-md">{error}</p>}
-          {success && <p className="text-green-600 text-xs text-center bg-green-50 p-2 rounded-md flex items-center justify-center gap-1"><CheckCircle2 className="w-4 h-4"/> {success}</p>}
+          {error && <p className="text-rose-600 text-xs text-center bg-rose-50 p-2.5 rounded-xl border border-rose-100 font-semibold">{error}</p>}
+          {success && <p className="text-emerald-700 text-xs text-center bg-emerald-50 p-2.5 rounded-xl border border-emerald-100 font-bold flex items-center justify-center gap-1"><CheckCircle2 className="w-4 h-4"/> {success}</p>}
 
           <button 
             disabled={isLoading || otp.length !== 4}
             type="submit" 
-            className="w-full bg-[var(--color-brand-primary)] hover:bg-[var(--color-brand-secondary)] text-white font-medium py-3 rounded-xl transition-all shadow-md shadow-[var(--color-brand-primary)]/20 flex items-center justify-center gap-2 disabled:cursor-not-allowed"
+            className="w-full bg-teal-700 hover:bg-teal-800 text-white font-extrabold py-3.5 rounded-2xl transition-all shadow-md shadow-teal-700/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {isLoading ? 'Verifying...' : 'Verify & Proceed'}
           </button>
 
-          <button type="button" onClick={() => setOtpStep('send')} className="w-full text-sm text-gray-500 hover:text-gray-900 transition-colors">
+          <button type="button" onClick={() => setOtpStep('send')} className="w-full text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors cursor-pointer">
             Change email/mobile
           </button>
         </form>
@@ -376,52 +372,55 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-gray-900/40 backdrop-blur-md"
+            className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
           />
 
           {/* Modal Container */}
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
-            className="relative w-full max-w-md bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            exit={{ opacity: 0, scale: 0.95, y: 15 }}
+            transition={{ type: "spring", duration: 0.35, bounce: 0.15 }}
+            className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-slate-100"
           >
             {/* Header / Tabs */}
-            <div className="px-6 pt-6 pb-4 border-b border-gray-100 flex-shrink-0">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-serif text-gray-900">Welcome</h2>
-                <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
+            <div className="px-6 pt-6 pb-4 border-b border-slate-100 flex-shrink-0">
+              <div className="flex justify-between items-center mb-5">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight">Welcome to PGInfo</h2>
+                  <p className="text-[11px] text-slate-500 font-medium">Find or post verified properties with zero brokerage</p>
+                </div>
+                <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400 hover:text-slate-700 cursor-pointer">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="flex p-1 bg-gray-100 rounded-xl relative">
+              <div className="flex p-1 bg-slate-100 rounded-2xl relative">
                 <button 
                   onClick={() => {setActiveTab('otp'); setError(null); setSuccess(null);}}
-                  className={`flex-1 py-2 text-sm font-medium rounded-lg z-10 transition-colors ${activeTab === 'otp' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`flex-1 py-2 text-xs font-bold rounded-xl z-10 transition-colors cursor-pointer ${activeTab === 'otp' ? 'text-slate-900' : 'text-slate-500 hover:text-slate-800'}`}
                 >
                   Quick OTP
                 </button>
                 <button 
                   onClick={() => {setActiveTab('password'); setError(null); setSuccess(null);}}
-                  className={`flex-1 py-2 text-sm font-medium rounded-lg z-10 transition-colors ${activeTab === 'password' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`flex-1 py-2 text-xs font-bold rounded-xl z-10 transition-colors cursor-pointer ${activeTab === 'password' ? 'text-slate-900' : 'text-slate-500 hover:text-slate-800'}`}
                 >
-                  Password Auth
+                  Password Login
                 </button>
                 
-                {/* Sliding Background indicator for tabs */}
+                {/* Sliding Indicator */}
                 <motion.div 
-                  className="absolute inset-y-1 w-[calc(50%-4px)] bg-white rounded-lg shadow-sm"
+                  className="absolute inset-y-1 w-[calc(50%-4px)] bg-white rounded-xl shadow-xs"
                   initial={false}
                   animate={{ left: activeTab === 'otp' ? '4px' : 'calc(50% + 0px)' }}
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
+                  transition={{ type: "spring", bounce: 0.15, duration: 0.35 }}
                 />
               </div>
             </div>
 
             {/* Content Area */}
-            <div className="p-6 overflow-y-auto scrollbar-hide flex-1">
+            <div className="p-6 overflow-y-auto scrollbar-thin flex-1">
               <AnimatePresence mode="wait">
                 {activeTab === 'password' ? renderPasswordTab() : renderOtpTab()}
               </AnimatePresence>

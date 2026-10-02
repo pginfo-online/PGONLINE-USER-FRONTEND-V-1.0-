@@ -725,9 +725,9 @@ export default function BuffetsPage() {
             </div>
 
             {/* Card 2: Top Restaurants */}
-            <div className="bg-[#FFF4ED] rounded-3xl p-5 border border-orange-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div className="bg-teal-50/70 rounded-3xl p-5 border border-teal-100 flex flex-col justify-between hover:shadow-md transition-shadow">
               <div className="flex justify-between items-start mb-4">
-                <div className="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-bold">
+                <div className="w-10 h-10 rounded-2xl bg-teal-600 text-white flex items-center justify-center font-bold">
                   <span>🛎️</span>
                 </div>
                 <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-xs relative">
@@ -737,7 +737,7 @@ export default function BuffetsPage() {
               <div>
                 <h3 className="font-black text-gray-900 text-base mb-1">Top Restaurants</h3>
                 <p className="text-gray-500 text-xs mb-4">Discover top-rated restaurants near you</p>
-                <Link href="/explore" className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-orange-600 shadow-xs hover:scale-110 transition-transform">
+                <Link href="/explore" className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-teal-700 shadow-xs hover:scale-110 transition-transform">
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>

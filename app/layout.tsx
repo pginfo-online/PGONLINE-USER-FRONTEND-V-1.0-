@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import { AuthProvider } from "../contexts/AuthContext";
-
 export const metadata: Metadata = {
-  title: "PGInfo.online - Find Your Perfect PG & Unlimited Buffets",
-  description: "Find your perfect PG, feel like home. Discover verified PGs, hostels, co-living spaces, and unlimited buffets at great locations.",
-  keywords: ["PG in Pune", "Hostels", "Co-living", "Unlimited Buffets", "Dining", "Rooms for rent", "Student accommodation", "PGInfo"],
+  title: "PGInfo - Verified PGs, Flats & Commercial Properties in India",
+  description: "Discover verified PGs, student hostels, rental flats, and commercial properties across top cities in India with zero hidden brokerage.",
+  keywords: ["PGs in Pune", "Hostels", "Rental Flats", "Apartments for Rent", "Commercial Office Space", "Co-living", "PGInfo"],
   authors: [{ name: "PGInfo.online" }],
   creator: "PGInfo.online",
   publisher: "PGInfo.online",
@@ -36,6 +34,8 @@ export const metadata: Metadata = {
   },
 };
 
+import Providers from "./providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -44,9 +44,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth antialiased">
       <body className="min-h-full flex flex-col font-sans text-gray-900 bg-slate-50">
-        <AuthProvider>
+        <Providers>
           {children}
-        </AuthProvider>
+        </Providers>
       </body>
     </html>
   );

@@ -219,7 +219,7 @@ export default function DealsPage() {
               onClick={() => setFilters(prev => ({ ...prev, sort: prev.sort === 'discount' ? '' : 'discount' }))}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all shadow-sm cursor-pointer ${
                 filters.sort === 'discount' 
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-orange-500/25' 
+                  ? 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-rose-500/25' 
                   : 'bg-white text-slate-800 border border-slate-200 hover:border-amber-400 hover:text-amber-600'
               }`}
             >

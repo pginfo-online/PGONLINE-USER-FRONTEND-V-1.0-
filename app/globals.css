@@ -1,42 +1,56 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-brand-navy: #111827;
-  --color-brand-purple: #0A4242;
-  /* Custom teal theme applied globally */
-  --color-brand-primary: #0A4242;
-  --color-brand-secondary: #062b2b;
-  /* Explicit primary mapping for all buttons */
-  --color-brand-violet: #7C3AED;
+  --color-brand-navy: #0F172A;
+  --color-brand-navy-light: #1E293B;
+  --color-brand-primary: #0F766E;
+  --color-brand-primary-hover: #0D9488;
+  --color-brand-primary-light: #F0FDFA;
+  --color-brand-secondary: #0A4242;
+  --color-brand-accent: #2563EB;
+  --color-brand-accent-hover: #1D4ED8;
+  --color-brand-accent-light: #EFF6FF;
   --color-brand-blue: #2563EB;
-  --color-brand-green: #10B981;
+  --color-brand-green: #059669;
+  --color-brand-emerald: #10B981;
   --color-brand-bg: #F8FAFC;
   --color-brand-white: #FFFFFF;
+  --color-brand-border: #E2E8F0;
 
-  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
-  --background: var(--color-brand-bg);
-  --foreground: var(--color-brand-navy);
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --primary: #0F766E;
+  --accent: #2563EB;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Light canvas default - avoid black/dark mode override for clean property discovery */
 body {
   background-color: var(--background);
   color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom utilities */
+/* Custom interactive & layout utilities */
 @layer utilities {
   .glass-card {
-    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl;
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06);
+  }
+
+  .glass-header {
+    background-color: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.9);
   }
 
   .scrollbar-hide {
@@ -47,4 +61,24 @@ body {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #CBD5E1 transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #CBD5E1;
+    border-radius: 9999px;
+  }
+}
+
+/* Dual range slider custom thumb styling */
+input[type="range"] {
+  accent-color: #2563EB;
 }

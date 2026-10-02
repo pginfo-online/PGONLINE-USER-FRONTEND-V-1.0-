@@ -9,6 +9,7 @@ import TenantOwnerSection from "../components/TenantOwnerSection";
 import Testimonials from "../components/Testimonials";
 import FinalCTA from "../components/FinalCTA";
 import Footer from "../components/Footer";
+import ContactOwnerModal from "../components/ContactOwnerModal";
 
 export default function Home() {
   return (
@@ -18,18 +19,19 @@ export default function Home() {
       <main className="flex-1 w-full bg-[var(--color-brand-bg)]">
         <Hero />
         
-        <div className="space-y-16 lg:space-y-24 mb-16 lg:mb-24">
-          <AppPromotion />
+        <div className="space-y-14 lg:space-y-20 mb-16 lg:mb-24">
           <CategorySection />
-          <WhyChooseUs />
           <RecommendedPGs />
+          <WhyChooseUs />
           <TrustStats />
+          <AppPromotion />
           <TenantOwnerSection />
           <Testimonials />
           <FinalCTA />
         </div>
       </main>
 
+      <ContactOwnerModal />
       <Footer />
     </>
   );

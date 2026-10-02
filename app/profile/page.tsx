@@ -29,7 +29,6 @@ export default function ProfilePage() {
     address: '',
     city: '',
     state: '',
-    state: '',
     pincode: ''
   });
 
