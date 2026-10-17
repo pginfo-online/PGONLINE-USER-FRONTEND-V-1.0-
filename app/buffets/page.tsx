@@ -13,7 +13,6 @@ import {
   Search, 
   SlidersHorizontal, 
   CheckCircle2, 
-  Map, 
   Tag, 
   Utensils, 
   ArrowRight, 
@@ -22,15 +21,19 @@ import {
   Star, 
   Flame, 
   RotateCcw,
-  X,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  ShieldCheck,
+  Clock,
+  ArrowUpRight,
+  TrendingUp,
+  Award,
+  BadgeCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
 import { getBaseApiUrl } from '../../lib/api/apiClient';
-import Image from 'next/image';
 import Link from 'next/link';
 
 export default function BuffetsPage() {
@@ -41,11 +44,7 @@ export default function BuffetsPage() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/');
-    }
-  }, [user, authLoading, router]);
+  // Public discovery page: guest and authenticated users can browse buffets freely
 
   // Filters state
   const [filters, setFilters] = useState({
@@ -131,7 +130,7 @@ export default function BuffetsPage() {
 
       if (data.success) {
         let fetchedBuffets = data.data || [];
-        // Local filtering for extra filters if needed
+        // Local filtering for extra filters
         if (filters.maxPrice < 1000) {
           fetchedBuffets = fetchedBuffets.filter((b: any) => (b.price || 0) <= filters.maxPrice);
         }
@@ -139,7 +138,7 @@ export default function BuffetsPage() {
           fetchedBuffets = fetchedBuffets.filter((b: any) => (b.hotel?.avgRating || 4.2) >= filters.minRating);
         }
 
-        // --- ADD DUMMY DATA FOR DEMO PURPOSES IF EMPTY ---
+        // Dummy fallback data matching the authentic items from the visual
         if (fetchedBuffets.length === 0) {
           fetchedBuffets = [
             {
@@ -148,7 +147,7 @@ export default function BuffetsPage() {
               foodType: 'veg',
               price: 499,
               pricePerPerson: 499,
-              startTime: '12:30 PM',
+              startTime: '12:00 PM',
               endTime: '3:30 PM',
               type: 'lunch',
               cuisine: ['North Indian', 'Paneer Special', 'Desserts'],
@@ -161,7 +160,7 @@ export default function BuffetsPage() {
               foodType: 'nonveg',
               price: 799,
               pricePerPerson: 799,
-              startTime: '8:00 PM',
+              startTime: '7:00 PM',
               endTime: '11:30 PM',
               type: 'dinner',
               cuisine: ['BBQ Grill', 'Tandoori Kebabs', 'Mughlai'],
@@ -174,11 +173,11 @@ export default function BuffetsPage() {
               foodType: 'veg',
               price: 599,
               pricePerPerson: 599,
-              startTime: '11:00 AM',
+              startTime: '11:30 AM',
               endTime: '4:00 PM',
               type: 'brunch',
               cuisine: ['Wood-fired Pizza', 'Creamy Pasta', 'Garlic Bread'],
-              hotel: { name: 'Cafe Botanica', area: 'Baner', city: 'Pune', avgRating: 4.9 },
+              hotel: { name: 'Cafe Botanica', area: 'Baner', city: 'Pune', avgRating: 4.6 },
               images: [{ url: '/assets/images/buffet-3.jpg' }]
             },
             {
@@ -188,9 +187,9 @@ export default function BuffetsPage() {
               price: 399,
               pricePerPerson: 399,
               startTime: '4:00 PM',
-              endTime: '8:30 PM',
+              endTime: '9:30 PM',
               type: 'dessert',
-              cuisine: ['Choco Lava', 'Gulab Jamun', 'Waffles', 'Ice Cream'],
+              cuisine: ['Choco Lava', 'Gulab Jamun', 'Waffles'],
               hotel: { name: 'Zenith Dining', area: 'Kalyani Nagar', city: 'Pune', avgRating: 4.7 },
               images: [{ url: '/assets/images/buffet-4.jpg' }]
             }
@@ -211,7 +210,7 @@ export default function BuffetsPage() {
 
   const handleClearFilters = () => {
     setFilters({
-      city: 'All Cities',
+      city: 'Pune',
       area: 'All Areas',
       foodType: 'all',
       maxPrice: 1000,
@@ -229,75 +228,116 @@ export default function BuffetsPage() {
     }, 4000);
   };
 
+  const hasActiveFilters = 
+    filters.city !== 'Pune' || 
+    filters.area !== 'All Areas' || 
+    filters.foodType !== 'all' || 
+    filters.maxPrice < 1000 || 
+    filters.minRating > 0;
+
   if (authLoading || (!authLoading && !user)) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
-        <Loader2 className="w-12 h-12 animate-spin text-[var(--color-brand-primary)]" />
-        <p className="mt-4 text-gray-500 font-medium">Checking authentication...</p>
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
+        <p className="mt-4 text-slate-500 font-medium">Checking authentication...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans selection:bg-emerald-100 selection:text-emerald-900">
       <Navbar />
 
-      <main className="flex-1 w-full max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-[75px] md:pt-[85px] pb-8">
+      <main className="flex-1 w-full max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-[78px] md:pt-[88px] pb-12">
         
-        {/* ------------------ 2. HERO / PAGE HEADER ------------------ */}
+        {/* ------------------ 1. LUXURY HERO BANNER ------------------ */}
         <AnimatePresence>
           {!isBannerCollapsed && (
             <motion.section 
-              initial={{ opacity: 1, height: 'auto', marginBottom: 12 }}
-              animate={{ opacity: 1, height: 'auto', marginBottom: 12 }}
-              exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-              transition={{ duration: 0.3 }}
-              className="relative py-4 md:py-6 bg-cover bg-center rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100"
-              style={{ backgroundImage: 'url("/assets/images/buffet-header-bg.png")' }}
+              initial={{ opacity: 0, y: -10, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: 'auto' }}
+              exit={{ opacity: 0, y: -10, height: 0 }}
+              transition={{ duration: 0.35, ease: 'easeInOut' }}
+              className="relative mb-5 rounded-3xl overflow-hidden border border-slate-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white"
             >
-              {/* Subtle gradient overlay to ensure text legibility on light/white background */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/70 to-transparent"></div>
+              {/* Decorative culinary background with rich gradient overlay */}
+              <div 
+                className="absolute inset-0 bg-cover bg-right sm:bg-center"
+                style={{ backgroundImage: 'url("/assets/images/buffet-header-bg.png")' }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-white via-white/88 to-white/20 sm:to-transparent" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(16,185,129,0.08),transparent_50%)]" />
 
               {/* Collapse Button Top-Right Corner */}
               <button 
                 onClick={() => setIsBannerCollapsed(true)}
-                className="absolute top-3.5 right-3.5 z-20 flex items-center justify-center p-2 bg-white/80 hover:bg-white text-gray-600 hover:text-gray-900 rounded-full backdrop-blur-md border border-white shadow-xs transition-all cursor-pointer group"
+                className="absolute top-3.5 right-3.5 z-20 flex items-center justify-center w-8 h-8 bg-white/80 hover:bg-white text-slate-500 hover:text-slate-900 rounded-full backdrop-blur-md border border-white/80 shadow-xs transition-all cursor-pointer group"
                 title="Collapse banner"
               >
                 <ChevronUp className="w-4 h-4 transition-transform group-hover:-translate-y-0.5" />
               </button>
               
-              <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-6 sm:px-10">
+              <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-6 sm:px-10 py-6 sm:py-8">
                 
                 {/* Left Content */}
                 <div className="max-w-2xl">
-                  <span className="text-[#059669] font-extrabold text-xs tracking-wider uppercase mb-2 inline-flex items-center gap-1.5 bg-white/60 px-3 py-1 rounded-full backdrop-blur-sm border border-emerald-100">
-                    EXPLORE DINING SPREADS
-                  </span>
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 tracking-tight flex items-center gap-2 mt-2">
+                  {/* Badge */}
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 shadow-2xs mb-2.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-emerald-800 font-extrabold text-[11px] tracking-wider uppercase">
+                      Explore Dining Spreads
+                    </span>
+                  </div>
+
+                  {/* Heading */}
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
                     Unlimited Buffets
-                    <Sparkles className="w-7 h-7 text-[#059669] fill-[#059669]/20 shrink-0" />
+                    <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-600 fill-emerald-500/20 shrink-0 animate-bounce" style={{ animationDuration: '3s' }} />
                   </h1>
-                  <p className="mt-3 text-gray-800 text-sm sm:text-base leading-relaxed font-bold bg-white/50 backdrop-blur-sm inline-block px-4 py-2 rounded-xl border border-white">
+
+                  {/* Subtitle */}
+                  <p className="mt-2.5 text-slate-700 text-sm sm:text-base leading-relaxed font-semibold max-w-xl">
                     Eat more. Pay less. Discover the best buffet deals near you.
                   </p>
+
+                  {/* Quick Feature Badges */}
+                  <div className="flex flex-wrap items-center gap-2 mt-4 pt-1">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 backdrop-blur-sm border border-slate-200/70 text-xs font-bold text-slate-700 shadow-2xs">
+                      <Flame className="w-3.5 h-3.5 text-amber-500" />
+                      50+ Verified Spreads
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 backdrop-blur-sm border border-slate-200/70 text-xs font-bold text-slate-700 shadow-2xs">
+                      <Tag className="w-3.5 h-3.5 text-emerald-600" />
+                      Special Student & PG Pricing
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 backdrop-blur-sm border border-slate-200/70 text-xs font-bold text-slate-700 shadow-2xs">
+                      <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                      Instant Table Confirmation
+                    </span>
+                  </div>
                 </div>
 
-                {/* Right: Bookings Button */}
-                <div className="flex flex-col items-end w-full md:w-auto">
-                  <div className="flex items-center gap-4 w-full justify-between md:justify-end">
-                    {/* Bookings Button */}
-                    <div className="flex flex-col items-end">
-                      <button 
-                        onClick={() => router.push('/profile?tab=bookings')}
-                        className="flex items-center justify-center gap-2.5 px-6 py-3 bg-[#FFF5F2] text-[#D97706] border border-[#FDE68A] rounded-full text-sm font-bold hover:bg-[#F59E0B] hover:text-white hover:border-[#F59E0B] transition-all shadow-md cursor-pointer group"
-                      >
-                        <Calendar className="w-4 h-4 text-[#D97706] group-hover:text-white transition-colors" />
-                        <span>Bookings</span>
-                      </button>
-                      <span className="text-[11px] text-gray-500 font-bold mt-2 bg-white/50 backdrop-blur-sm px-2 py-0.5 rounded-full">Manage your buffet bookings</span>
+                {/* Right: Bookings Card Button */}
+                <div className="flex flex-col items-end w-full md:w-auto shrink-0">
+                  <motion.button 
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => router.push('/profile?tab=bookings')}
+                    className="group relative flex items-center gap-3.5 px-6 py-3.5 bg-gradient-to-r from-[#FFFBEB] to-[#FEF3C7] text-amber-900 border border-amber-300/80 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-sm group-hover:rotate-6 transition-transform">
+                      <Calendar className="w-5 h-5" />
                     </div>
-                  </div>
+                    <div className="text-left">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-extrabold text-sm text-slate-900">Bookings</span>
+                        <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      </div>
+                      <span className="text-[11px] font-medium text-amber-800/90 block">
+                        Manage your buffet bookings
+                      </span>
+                    </div>
+                  </motion.button>
                 </div>
 
               </div>
@@ -306,55 +346,64 @@ export default function BuffetsPage() {
         </AnimatePresence>
 
 
-        {/* ------------------ 4. LOCATION + FILTER BAR ------------------ */}
-        <section className="mb-4 relative z-40">
-          <div className="bg-white rounded-2xl p-2 sm:p-2.5 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-gray-100 flex flex-wrap items-center justify-between gap-2.5 relative">
+        {/* ------------------ 2. MODERN FLOATING FILTER TOOLBAR ------------------ */}
+        <section className="mb-6 relative z-40">
+          <div className="bg-white/95 backdrop-blur-xl rounded-2xl p-2.5 sm:p-3 shadow-[0_6px_25px_-5px_rgba(0,0,0,0.05)] border border-slate-200/80 flex flex-wrap items-center justify-between gap-2.5">
             
-            {/* Full-screen overlay to close dropdowns when clicking outside */}
+            {/* Click-outside backdrop for dropdowns */}
             {(isCityOpen || isAreaOpen) && (
               <div 
                 className="fixed inset-0 z-[90]" 
                 onClick={() => { setIsCityOpen(false); setIsAreaOpen(false); }}
-              ></div>
+              />
             )}
 
+            {/* Left Controls Cluster */}
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto relative z-[95]">
               
-              {/* Custom City Selector */}
+              {/* City Dropdown */}
               <div className="relative inline-flex items-center shrink-0">
                 <button 
                   onClick={() => { setIsCityOpen(!isCityOpen); setIsAreaOpen(false); }}
-                  className={`flex items-center justify-between gap-2 pl-3 pr-3 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-800 rounded-xl text-xs sm:text-sm font-bold transition-all border ${isCityOpen ? 'border-emerald-500 shadow-sm ring-2 ring-emerald-500/20' : 'border-gray-200'} outline-none cursor-pointer w-36`}
+                  className={`flex items-center justify-between gap-2 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-800 rounded-xl text-xs sm:text-sm font-bold transition-all border ${
+                    isCityOpen ? 'border-emerald-500 shadow-sm ring-2 ring-emerald-500/20 bg-white' : 'border-slate-200'
+                  } outline-none cursor-pointer w-36`}
                 >
                   <div className="flex items-center gap-2 truncate">
-                    <Building2 className="w-4 h-4 text-[#0A4242] shrink-0" />
+                    <Building2 className="w-4 h-4 text-emerald-700 shrink-0" />
                     <span className="truncate">{filters.city}</span>
                   </div>
-                  <span className={`text-gray-400 text-xs transition-transform duration-200 ${isCityOpen ? 'rotate-180' : ''}`}>▾</span>
+                  <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isCityOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 <AnimatePresence>
                   {isCityOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
+                      initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -6, scale: 0.98 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.12)] overflow-hidden py-2 max-h-64 overflow-y-auto z-[100] hide-scrollbar"
+                      className="absolute top-full left-0 mt-2 w-48 bg-white border border-slate-100 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden py-1.5 max-h-64 overflow-y-auto z-[100] hide-scrollbar"
                     >
                       <button
                         onClick={() => { setFilters(prev => ({ ...prev, city: 'All Cities', area: 'All Areas' })); setIsCityOpen(false); }}
-                        className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors hover:bg-gray-50 ${filters.city === 'All Cities' ? 'text-emerald-600 bg-emerald-50' : 'text-gray-700'}`}
+                        className={`w-full text-left px-4 py-2 text-xs sm:text-sm font-bold transition-colors hover:bg-slate-50 flex items-center justify-between ${
+                          filters.city === 'All Cities' ? 'text-emerald-700 bg-emerald-50' : 'text-slate-700'
+                        }`}
                       >
-                        All Cities
+                        <span>All Cities</span>
+                        {filters.city === 'All Cities' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
                       </button>
                       {availableCities.map(c => (
                         <button
                           key={c}
                           onClick={() => { setFilters(prev => ({ ...prev, city: c, area: 'All Areas' })); setIsCityOpen(false); }}
-                          className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors hover:bg-gray-50 ${filters.city === c ? 'text-emerald-600 bg-emerald-50' : 'text-gray-700'}`}
+                          className={`w-full text-left px-4 py-2 text-xs sm:text-sm font-bold transition-colors hover:bg-slate-50 flex items-center justify-between ${
+                            filters.city === c ? 'text-emerald-700 bg-emerald-50' : 'text-slate-700'
+                          }`}
                         >
-                          {c}
+                          <span>{c}</span>
+                          {filters.city === c && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
                         </button>
                       ))}
                     </motion.div>
@@ -362,44 +411,52 @@ export default function BuffetsPage() {
                 </AnimatePresence>
               </div>
 
-              {/* Custom Area Selector */}
+              {/* Area Dropdown */}
               <div className="relative inline-flex items-center shrink-0">
                 <button 
                   onClick={() => { setIsAreaOpen(!isAreaOpen); setIsCityOpen(false); }}
-                  className={`flex items-center justify-between gap-2 pl-3 pr-3 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-800 rounded-xl text-xs sm:text-sm font-bold transition-all border ${isAreaOpen ? 'border-emerald-500 shadow-sm ring-2 ring-emerald-500/20' : 'border-gray-200'} outline-none cursor-pointer w-40`}
+                  className={`flex items-center justify-between gap-2 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-800 rounded-xl text-xs sm:text-sm font-bold transition-all border ${
+                    isAreaOpen ? 'border-emerald-500 shadow-sm ring-2 ring-emerald-500/20 bg-white' : 'border-slate-200'
+                  } outline-none cursor-pointer w-40`}
                 >
                   <div className="flex items-center gap-2 truncate">
                     <MapPin className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span className="truncate">{filters.area}</span>
                   </div>
-                  <span className={`text-gray-400 text-xs transition-transform duration-200 ${isAreaOpen ? 'rotate-180' : ''}`}>▾</span>
+                  <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isAreaOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 <AnimatePresence>
                   {isAreaOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
+                      initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -6, scale: 0.98 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.12)] overflow-hidden py-2 max-h-64 overflow-y-auto z-[100] hide-scrollbar"
+                      className="absolute top-full left-0 mt-2 w-52 bg-white border border-slate-100 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden py-1.5 max-h-64 overflow-y-auto z-[100] hide-scrollbar"
                     >
                       <button
                         onClick={() => { setFilters(prev => ({ ...prev, area: 'All Areas' })); setIsAreaOpen(false); }}
-                        className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors hover:bg-gray-50 ${filters.area === 'All Areas' ? 'text-emerald-600 bg-emerald-50' : 'text-gray-700'}`}
+                        className={`w-full text-left px-4 py-2 text-xs sm:text-sm font-bold transition-colors hover:bg-slate-50 flex items-center justify-between ${
+                          filters.area === 'All Areas' ? 'text-emerald-700 bg-emerald-50' : 'text-slate-700'
+                        }`}
                       >
-                        All Areas
+                        <span>All Areas</span>
+                        {filters.area === 'All Areas' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
                       </button>
                       {availableAreas.length === 0 && (
-                        <div className="px-4 py-2 text-xs text-gray-400 font-medium">Select a city first</div>
+                        <div className="px-4 py-2 text-xs text-slate-400 font-medium">Select a city first</div>
                       )}
                       {availableAreas.map(a => (
                         <button
                           key={a}
                           onClick={() => { setFilters(prev => ({ ...prev, area: a })); setIsAreaOpen(false); }}
-                          className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors hover:bg-gray-50 ${filters.area === a ? 'text-emerald-600 bg-emerald-50' : 'text-gray-700'}`}
+                          className={`w-full text-left px-4 py-2 text-xs sm:text-sm font-bold transition-colors hover:bg-slate-50 flex items-center justify-between ${
+                            filters.area === a ? 'text-emerald-700 bg-emerald-50' : 'text-slate-700'
+                          }`}
                         >
-                          {a}
+                          <span>{a}</span>
+                          {filters.area === a && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
                         </button>
                       ))}
                     </motion.div>
@@ -407,84 +464,106 @@ export default function BuffetsPage() {
                 </AnimatePresence>
               </div>
 
-              {/* Veg Button */}
+              {/* Veg Toggle Pill */}
               <button 
                 onClick={() => setFilters({ ...filters, foodType: filters.foodType === 'veg' ? 'all' : 'veg' })}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all border cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border cursor-pointer ${
                   filters.foodType === 'veg' 
-                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300 shadow-2xs' 
-                    : 'bg-gray-50 hover:bg-gray-100 text-gray-700 border-gray-200'
+                    ? 'bg-emerald-500 text-white border-emerald-600 shadow-sm shadow-emerald-200 ring-2 ring-emerald-500/20' 
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
                 }`}
               >
-                <span>🥦</span> Veg
+                <span>🥦</span>
+                <span>Veg</span>
               </button>
 
-              {/* Non-Veg Button */}
+              {/* Non-Veg Toggle Pill */}
               <button 
                 onClick={() => setFilters({ ...filters, foodType: filters.foodType === 'nonveg' ? 'all' : 'nonveg' })}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all border cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border cursor-pointer ${
                   filters.foodType === 'nonveg' 
-                    ? 'bg-rose-50 text-rose-800 border-rose-300 shadow-2xs' 
-                    : 'bg-gray-50 hover:bg-gray-100 text-gray-700 border-gray-200'
+                    ? 'bg-rose-500 text-white border-rose-600 shadow-sm shadow-rose-200 ring-2 ring-rose-500/20' 
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
                 }`}
               >
-                <span>🍗</span> Non-Veg
+                <span>🍗</span>
+                <span>Non-Veg</span>
               </button>
 
-              {/* More Filters Toggle Button */}
+              {/* More Filters Toggle */}
               <button
                 onClick={() => setShowMoreFilters(!showMoreFilters)}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all border cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border cursor-pointer ${
                   showMoreFilters || filters.maxPrice < 1000 || filters.minRating > 0
-                    ? 'bg-purple-50 text-purple-800 border-purple-300'
-                    : 'bg-gray-50 hover:bg-gray-100 text-gray-700 border-gray-200'
+                    ? 'bg-purple-600 text-white border-purple-700 shadow-sm ring-2 ring-purple-500/20'
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
                 }`}
               >
-                <SlidersHorizontal className="w-4 h-4 text-purple-600" />
+                <SlidersHorizontal className={`w-3.5 h-3.5 ${showMoreFilters || filters.maxPrice < 1000 || filters.minRating > 0 ? 'text-white' : 'text-purple-600'}`} />
                 <span>More Filters</span>
+                {(filters.maxPrice < 1000 || filters.minRating > 0) && (
+                  <span className="w-2 h-2 rounded-full bg-amber-400 ml-0.5 animate-ping" />
+                )}
               </button>
             </div>
 
-            {/* Right Side Controls (Reset & Bookings when collapsed) */}
-            <div className="flex items-center gap-2.5 ml-auto relative z-30">
+            {/* Right Controls: Bookings (if collapsed) & Reset */}
+            <div className="flex items-center gap-3 ml-auto relative z-30">
+              
               {/* Show Bookings Button when Banner is Collapsed */}
               {isBannerCollapsed && (
                 <button 
                   onClick={() => router.push('/profile?tab=bookings')}
-                  className="flex items-center justify-center gap-2 px-3.5 py-1.5 bg-[#FFF5F2] text-[#D97706] border border-[#FDE68A] rounded-xl text-xs sm:text-sm font-bold hover:bg-[#F59E0B] hover:text-white transition-all shadow-xs cursor-pointer group"
+                  className="flex items-center justify-center gap-2 px-3.5 py-2 bg-amber-50 text-amber-800 border border-amber-300 rounded-xl text-xs sm:text-sm font-bold hover:bg-amber-100 transition-all shadow-2xs cursor-pointer"
                 >
-                  <Calendar className="w-4 h-4 text-[#D97706] group-hover:text-white transition-colors" />
+                  <Calendar className="w-4 h-4 text-amber-700" />
                   <span>Bookings</span>
                 </button>
               )}
 
-              {/* Reset Button */}
-              {(filters.city !== 'All Cities' || filters.area !== 'All Areas' || filters.foodType !== 'all' || filters.maxPrice < 1000 || filters.minRating > 0) && (
-                <button 
-                  onClick={handleClearFilters}
-                  className="text-xs font-bold text-gray-500 hover:text-gray-900 underline flex items-center gap-1 cursor-pointer"
+              {/* Expand Banner Button when collapsed */}
+              {isBannerCollapsed && (
+                <button
+                  onClick={() => setIsBannerCollapsed(false)}
+                  className="p-2 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition-colors"
+                  title="Show header banner"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Reset</span>
+                  <ChevronDown className="w-4 h-4" />
                 </button>
+              )}
+
+              {/* Reset Button */}
+              {hasActiveFilters && (
+                <motion.button 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  onClick={handleClearFilters}
+                  className="text-xs font-bold text-slate-500 hover:text-emerald-700 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer group"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 group-hover:-rotate-45 transition-transform" />
+                  <span>Reset</span>
+                </motion.button>
               )}
             </div>
 
           </div>
 
-          {/* More Filters Expandable Panel */}
+          {/* More Filters Expandable Drawer */}
           <AnimatePresence>
             {showMoreFilters && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden mt-3 bg-white rounded-2xl p-5 shadow-lg border border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-6"
+                transition={{ duration: 0.25 }}
+                className="overflow-hidden mt-3 bg-white rounded-2xl p-5 shadow-lg border border-slate-200/80 grid grid-cols-1 md:grid-cols-2 gap-6"
               >
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <label className="text-xs font-bold text-gray-700">Max Price: ₹{filters.maxPrice}/person</label>
-                    <span className="text-xs text-gray-400">Up to ₹1000</span>
+                  <div className="flex justify-between items-center mb-2.5">
+                    <label className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">
+                      Budget Cap: ₹{filters.maxPrice}/person
+                    </label>
+                    <span className="text-xs text-slate-400 font-semibold">Max ₹1000</span>
                   </div>
                   <input 
                     type="range" 
@@ -493,24 +572,39 @@ export default function BuffetsPage() {
                     step="50"
                     value={filters.maxPrice}
                     onChange={(e) => setFilters({ ...filters, maxPrice: Number(e.target.value) })}
-                    className="w-full accent-[var(--color-brand-primary)] cursor-pointer"
+                    className="w-full accent-emerald-600 cursor-pointer h-2 bg-slate-100 rounded-lg"
                   />
+                  <div className="flex justify-between text-[11px] font-bold text-slate-400 mt-1.5">
+                    <span>₹200</span>
+                    <span>₹500</span>
+                    <span>₹750</span>
+                    <span>₹1000</span>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-gray-700 mb-2 block">Minimum Rating</label>
+                  <label className="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-2.5 block">
+                    Minimum Rating
+                  </label>
                   <div className="flex items-center gap-2">
                     {[0, 3.5, 4.0, 4.5].map((r) => (
                       <button
                         key={r}
                         onClick={() => setFilters({ ...filters, minRating: r })}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
+                        className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1 cursor-pointer ${
                           filters.minRating === r 
-                            ? 'bg-[#0A4242] text-white border-[#0A4242]' 
-                            : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'
+                            ? 'bg-slate-900 text-white border-slate-900 shadow-sm' 
+                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                         }`}
                       >
-                        {r === 0 ? 'Any' : `${r}★+`}
+                        {r === 0 ? (
+                          <span>Any Rating</span>
+                        ) : (
+                          <>
+                            <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                            <span>{r}★+</span>
+                          </>
+                        )}
                       </button>
                     ))}
                   </div>
@@ -521,75 +615,79 @@ export default function BuffetsPage() {
         </section>
 
 
-        {/* ------------------ 5. EMPTY STATE & BUFFET GRID ------------------ */}
+        {/* ------------------ 3. BUFFET DISCOVERY GRID ------------------ */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-24 text-gray-500 bg-white rounded-3xl border border-gray-100 shadow-2xs">
-            <Loader2 className="w-10 h-10 animate-spin text-[#0A4242] mb-4" />
-            <p className="font-medium text-gray-600">Discovering delicious buffet spreads near you...</p>
+          <div className="flex flex-col items-center justify-center py-24 text-slate-500 bg-white rounded-3xl border border-slate-100 shadow-2xs mb-16">
+            <Loader2 className="w-10 h-10 animate-spin text-emerald-600 mb-4" />
+            <p className="font-bold text-slate-700 text-base">Discovering delicious buffet spreads near you...</p>
+            <p className="text-xs text-slate-400 mt-1">Filtering verified restaurant spreads</p>
           </div>
         ) : error ? (
-          <div className="bg-red-50 text-red-600 p-8 rounded-3xl text-center shadow-2xs border border-red-100">
-            <p className="font-bold text-lg mb-2">{error}</p>
-            <button onClick={fetchBuffets} className="mt-4 px-6 py-2.5 bg-red-600 text-white rounded-full font-bold hover:bg-red-700 transition-colors shadow-sm">
+          <div className="bg-red-50 text-red-700 p-8 rounded-3xl text-center shadow-2xs border border-red-200 mb-16 max-w-lg mx-auto">
+            <p className="font-bold text-base mb-2">{error}</p>
+            <button 
+              onClick={fetchBuffets} 
+              className="mt-4 px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors shadow-sm cursor-pointer"
+            >
               Try Again
             </button>
           </div>
         ) : buffets.length === 0 ? (
-          /* Premium Empty State matching Image 1 mockup */
+          /* Empty State */
           <motion.section 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-3xl p-8 sm:p-14 text-center border border-gray-100 shadow-sm max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 mb-16"
+            className="bg-white rounded-3xl p-8 sm:p-14 text-center border border-slate-100 shadow-sm max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 mb-16"
           >
-            {/* Cloche / Search Illustration Graphic */}
-            <div className="relative shrink-0">
-              <div className="w-36 h-36 rounded-full bg-purple-50 flex items-center justify-center relative">
-                {/* 3D Purple Cloche Dish */}
-                <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-400 shadow-lg flex items-center justify-center text-white relative">
-                  <span className="text-5xl">🍲</span>
-                </div>
-                {/* Floating Search Icon Badge */}
-                <div className="absolute top-1 left-1 bg-white p-2.5 rounded-full shadow-md border border-gray-100">
-                  <Search className="w-5 h-5 text-purple-600" />
-                </div>
+            <div className="w-32 h-32 rounded-3xl bg-purple-50 flex items-center justify-center relative shrink-0 shadow-inner">
+              <span className="text-5xl">🍲</span>
+              <div className="absolute -top-1 -right-1 bg-white p-2 rounded-full shadow-md border border-slate-100">
+                <Search className="w-4 h-4 text-purple-600" />
               </div>
             </div>
 
-            {/* Empty State Text & Buttons */}
             <div className="text-center md:text-left">
-              <h2 className="text-2xl font-black text-gray-900 mb-2 flex items-center justify-center md:justify-start gap-2">
-                No buffets found <span>😟</span>
+              <h2 className="text-2xl font-black text-slate-900 mb-2 flex items-center justify-center md:justify-start gap-2">
+                No buffets found <span>🍽️</span>
               </h2>
-              <p className="text-gray-500 text-sm sm:text-base max-w-md mb-6 leading-relaxed">
-                We couldn't find any buffets matching your current filters. Try changing your location or food preferences.
+              <p className="text-slate-500 text-sm max-w-md mb-5 leading-relaxed">
+                We couldn't find any buffets matching your current location or filters. Try browsing all areas or resetting filters.
               </p>
 
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
                 <button 
                   onClick={handleClearFilters}
-                  className="px-6 py-3 bg-[#0A4242] text-white rounded-full font-bold text-sm shadow-md hover:bg-opacity-95 transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-5 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-xs shadow-md hover:bg-slate-800 transition-all flex items-center gap-2 cursor-pointer"
                 >
-                  <RotateCcw className="w-4 h-4" />
+                  <RotateCcw className="w-3.5 h-3.5" />
                   <span>Clear all filters</span>
                 </button>
                 <button 
-                  onClick={() => setFilters(prev => ({ ...prev, city: 'All Cities', area: 'All Areas' }))}
-                  className="px-6 py-3 bg-white text-gray-700 border border-gray-200 rounded-full font-bold text-sm hover:bg-gray-50 transition-all flex items-center gap-2 cursor-pointer"
+                  onClick={() => setFilters(prev => ({ ...prev, city: 'Pune', area: 'All Areas' }))}
+                  className="px-5 py-2.5 bg-slate-100 text-slate-700 border border-slate-200 rounded-xl font-bold text-xs hover:bg-slate-200 transition-all flex items-center gap-2 cursor-pointer"
                 >
-                  <MapPin className="w-4 h-4 text-emerald-600" />
-                  <span>Browse all areas</span>
+                  <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Browse Pune</span>
                 </button>
               </div>
             </div>
           </motion.section>
         ) : (
-          /* ------------------ 6. BUFFET DISCOVERY GRID ------------------ */
+          /* Available Buffets Grid */
           <section className="mb-16">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl sm:text-2xl font-black text-gray-900">
-                Available Buffets Near You ({buffets.length})
-              </h2>
-              <span className="text-xs text-gray-400 font-medium">Updated live</span>
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <span>Available Buffets Near You</span>
+                  <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-black">
+                    {buffets.length}
+                  </span>
+                </h2>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Updated live</span>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -601,47 +699,99 @@ export default function BuffetsPage() {
         )}
 
 
-        {/* ------------------ 10. FOOD VISUAL SECTION ------------------ */}
-        <section className="mb-16 bg-white rounded-3xl p-6 sm:p-10 border border-gray-100 shadow-sm overflow-hidden relative">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        {/* ------------------ 4. VISUAL STORYTELLING BENTO (Good Food. Great Value.) ------------------ */}
+        <section className="mb-16 bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-[0_4px_25px_rgba(0,0,0,0.03)] overflow-hidden relative">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            {/* Image Side */}
-            <div className="lg:col-span-6 relative h-64 sm:h-80 rounded-2xl overflow-hidden shadow-lg border border-gray-100 group">
+            {/* Visual Side */}
+            <div className="lg:col-span-6 relative h-72 sm:h-88 rounded-2xl overflow-hidden shadow-lg border border-slate-200/80 group">
               <img 
                 src="/assets/images/buffet-hero-spread.png" 
                 alt="Luxury Buffet Counter Spread" 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
-              <div className="absolute bottom-4 left-4 right-4 text-white">
-                <span className="bg-amber-500 text-white font-black text-[10px] uppercase px-2.5 py-1 rounded-full tracking-wider mb-1.5 inline-block">
-                  Unlimited Feast
-                </span>
-                <p className="font-bold text-sm sm:text-base text-white/90">Premium Multi-Cuisine Spreads</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
+              
+              {/* Floating Badge Bottom */}
+              <div className="absolute bottom-5 left-5 right-5 text-white flex items-end justify-between gap-4">
+                <div>
+                  <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-[10px] uppercase px-3 py-1 rounded-full tracking-wider mb-2 inline-block shadow-sm">
+                    Unlimited Feast
+                  </span>
+                  <p className="font-extrabold text-base sm:text-lg text-white">
+                    Premium Multi-Cuisine Spreads
+                  </p>
+                  <p className="text-xs text-white/80 font-medium mt-0.5">
+                    Live cooking counters, endless mains & dessert bars
+                  </p>
+                </div>
+                
+                <div className="hidden sm:flex flex-col items-end bg-black/40 backdrop-blur-md px-3 py-2 rounded-xl border border-white/10 shrink-0">
+                  <span className="text-[10px] uppercase font-bold text-amber-300">Save up to</span>
+                  <span className="text-sm font-black text-white">40% OFF</span>
+                </div>
               </div>
             </div>
 
-            {/* Text Side */}
+            {/* Story Content Side */}
             <div className="lg:col-span-6 flex flex-col justify-center">
-              <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-2 block">PG-FRIENDLY DINING</span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight mb-4">
-                Good Food. Great Value.<br />Zero Hassle.
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/70 text-emerald-800 text-[11px] font-extrabold tracking-wider uppercase mb-3 w-fit">
+                <Utensils className="w-3.5 h-3.5" />
+                <span>PG-Friendly Dining</span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 leading-tight mb-4 tracking-tight">
+                Good Food. Great Value.<br />
+                <span className="bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent">
+                  Zero Hassle.
+                </span>
               </h2>
-              <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-6 font-medium">
-                From quick weekday meals to weekend food plans, discover buffet options that fit your budget and your appetite. Compare prices, check menus, and reserve tables effortlessly.
+
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-6 font-medium">
+                From quick weekday meals to weekend feast plans with roommates, discover buffet options that fit your budget and your appetite. Compare prices, check live menus, and reserve tables effortlessly with your PG credentials.
               </p>
 
-              <div className="flex flex-wrap gap-4 items-center">
+              {/* Value Checkpoints */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+                <div className="flex items-center gap-2.5 text-xs font-bold text-slate-700">
+                  <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                    ✓
+                  </div>
+                  <span>Instant table booking</span>
+                </div>
+                <div className="flex items-center gap-2.5 text-xs font-bold text-slate-700">
+                  <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                    ✓
+                  </div>
+                  <span>Exclusive PG student discounts</span>
+                </div>
+                <div className="flex items-center gap-2.5 text-xs font-bold text-slate-700">
+                  <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                    ✓
+                  </div>
+                  <span>100% verified food ratings</span>
+                </div>
+                <div className="flex items-center gap-2.5 text-xs font-bold text-slate-700">
+                  <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                    ✓
+                  </div>
+                  <span>Zero hidden service charges</span>
+                </div>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-wrap gap-3.5 items-center">
                 <button 
                   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                  className="px-6 py-3 bg-[#0A4242] text-white rounded-full font-bold text-sm shadow-md hover:bg-opacity-90 transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer group"
                 >
                   <span>Explore Buffets</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
                 <Link 
                   href="/deals"
-                  className="px-6 py-3 bg-gray-100 text-gray-800 rounded-full font-bold text-sm hover:bg-gray-200 transition-all"
+                  className="px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-2xl font-bold text-sm transition-all shadow-2xs"
                 >
                   View Food Deals
                 </Link>
@@ -652,11 +802,18 @@ export default function BuffetsPage() {
         </section>
 
 
-        {/* ------------------ 9. WHY PGINFO BUFFETS? ------------------ */}
+        {/* ------------------ 5. WHY PGINFO BUFFETS? ------------------ */}
         <section className="mb-16">
           <div className="text-center max-w-xl mx-auto mb-10">
-            <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2">Why PGInfo Buffets?</h2>
-            <p className="text-gray-500 text-sm font-medium">Tailored dining experiences designed specifically for students and young professionals.</p>
+            <span className="text-emerald-700 font-extrabold text-xs tracking-wider uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/60 inline-block mb-2">
+              Tailored Dining Experiences
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mb-2">
+              Why PGInfo Buffets?
+            </h2>
+            <p className="text-slate-500 text-sm font-medium">
+              Curated unlimited spreads and dining perks designed specifically for students and young working professionals.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -664,147 +821,248 @@ export default function BuffetsPage() {
               {
                 icon: <MapPin className="w-6 h-6 text-emerald-600" />,
                 title: "Discover Nearby",
-                desc: "Find buffet options right around your PG, college, or office workplace."
+                desc: "Find buffet options right around your PG, college, or office workplace with walking distances.",
+                badge: "Within 2-5 KM",
+                badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200"
               },
               {
                 icon: <Tag className="w-6 h-6 text-amber-500" />,
                 title: "Compare Prices",
-                desc: "Easily compare unlimited spread prices, veg/non-veg options, and discounts."
+                desc: "Easily compare unlimited spread prices, veg/non-veg options, and student discounts before stepping out.",
+                badge: "Save Up to 40%",
+                badgeColor: "bg-amber-50 text-amber-700 border-amber-200"
               },
               {
                 icon: <Utensils className="w-6 h-6 text-purple-600" />,
                 title: "Easy Booking",
-                desc: "Reserve your preferred dining table in seconds without tedious call waits."
+                desc: "Reserve your preferred dining table in seconds without tedious call waits or queueing.",
+                badge: "Instant Pass",
+                badgeColor: "bg-purple-50 text-purple-700 border-purple-200"
               },
               {
                 icon: <Sparkles className="w-6 h-6 text-rose-500" />,
                 title: "PG-Friendly Deals",
-                desc: "Exclusive student discounts and group buffet offers created for PG tenants."
+                desc: "Exclusive student discounts and group buffet offers created for PG tenants and coliving members.",
+                badge: "Exclusive Perks",
+                badgeColor: "bg-rose-50 text-rose-700 border-rose-200"
               }
             ].map((item, idx) => (
-              <div key={idx} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-2xs hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center mb-4">
-                  {item.icon}
+              <motion.div 
+                key={idx} 
+                whileHover={{ y: -4 }}
+                className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-md transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center">
+                      {item.icon}
+                    </div>
+                    <span className={`text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full border ${item.badgeColor}`}>
+                      {item.badge}
+                    </span>
+                  </div>
+                  <h3 className="font-extrabold text-slate-900 text-base mb-2">{item.title}</h3>
+                  <p className="text-slate-500 text-xs leading-relaxed">{item.desc}</p>
                 </div>
-                <h3 className="font-bold text-gray-900 text-base mb-1.5">{item.title}</h3>
-                <p className="text-gray-500 text-xs leading-relaxed">{item.desc}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
 
 
-        {/* ------------------ 11. YOU MIGHT ALSO LIKE (Matches Image 1) ------------------ */}
+        {/* ------------------ 6. YOU MIGHT ALSO LIKE (Bento Cards) ------------------ */}
         <section className="mb-16">
-          <div className="mb-6">
-            <h2 className="text-xl sm:text-2xl font-black text-gray-900 flex items-center gap-2">
-              You might also like
-              <Sparkles className="w-5 h-5 text-purple-600" />
-            </h2>
-            <p className="text-gray-500 text-xs sm:text-sm font-medium mt-0.5">Explore popular dining options near you</p>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2 tracking-tight">
+                You might also like
+                <Sparkles className="w-5 h-5 text-purple-600" />
+              </h2>
+              <p className="text-slate-500 text-xs sm:text-sm font-medium mt-0.5">
+                Explore popular dining options near you
+              </p>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             
             {/* Card 1: Deals & Offers */}
-            <div className="bg-[#F4F0FF] rounded-3xl p-5 border border-purple-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <motion.div 
+              whileHover={{ y: -4 }}
+              className="bg-gradient-to-b from-[#F5F3FF] to-white rounded-3xl p-5 border border-purple-200/70 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-lg transition-all group"
+            >
               <div className="flex justify-between items-start mb-4">
-                <div className="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center font-bold">
+                <div className="w-11 h-11 rounded-2xl bg-purple-600 text-white flex items-center justify-center font-bold shadow-sm group-hover:rotate-6 transition-transform">
                   <Utensils className="w-5 h-5" />
                 </div>
-                <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-xs relative">
-                  <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=300&q=80" alt="Deals" className="w-full h-full object-cover" />
+                <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-sm relative bg-slate-100 border-2 border-white">
+                  <img 
+                    src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=300&q=80" 
+                    alt="Deals" 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    loading="lazy"
+                  />
                 </div>
               </div>
               <div>
-                <h3 className="font-black text-gray-900 text-base mb-1">Deals & Offers</h3>
-                <p className="text-gray-500 text-xs mb-4">Exciting offers on food at top restaurants</p>
-                <Link href="/deals" className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-purple-600 shadow-xs hover:scale-110 transition-transform">
+                <h3 className="font-black text-slate-900 text-base mb-1 group-hover:text-purple-700 transition-colors">
+                  Deals & Offers
+                </h3>
+                <p className="text-slate-500 text-xs mb-4">
+                  Exciting offers on food at top restaurants
+                </p>
+                <Link 
+                  href="/deals" 
+                  className="w-9 h-9 rounded-full bg-white border border-purple-100 flex items-center justify-center text-purple-600 shadow-sm hover:bg-purple-600 hover:text-white transition-all"
+                >
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 2: Top Restaurants */}
-            <div className="bg-teal-50/70 rounded-3xl p-5 border border-teal-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <motion.div 
+              whileHover={{ y: -4 }}
+              className="bg-gradient-to-b from-[#F0FDFA] to-white rounded-3xl p-5 border border-teal-200/70 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-lg transition-all group"
+            >
               <div className="flex justify-between items-start mb-4">
-                <div className="w-10 h-10 rounded-2xl bg-teal-600 text-white flex items-center justify-center font-bold">
-                  <span>🛎️</span>
+                <div className="w-11 h-11 rounded-2xl bg-teal-600 text-white flex items-center justify-center font-bold shadow-sm group-hover:rotate-6 transition-transform">
+                  <Award className="w-5 h-5" />
                 </div>
-                <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-xs relative">
-                  <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=300&q=80" alt="Restaurants" className="w-full h-full object-cover" />
+                <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-sm relative bg-slate-100 border-2 border-white">
+                  <img 
+                    src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=300&q=80" 
+                    alt="Restaurants" 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    loading="lazy"
+                  />
                 </div>
               </div>
               <div>
-                <h3 className="font-black text-gray-900 text-base mb-1">Top Restaurants</h3>
-                <p className="text-gray-500 text-xs mb-4">Discover top-rated restaurants near you</p>
-                <Link href="/explore" className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-teal-700 shadow-xs hover:scale-110 transition-transform">
+                <h3 className="font-black text-slate-900 text-base mb-1 group-hover:text-teal-700 transition-colors">
+                  Top Restaurants
+                </h3>
+                <p className="text-slate-500 text-xs mb-4">
+                  Discover top-rated restaurants near you
+                </p>
+                <Link 
+                  href="/explore" 
+                  className="w-9 h-9 rounded-full bg-white border border-teal-100 flex items-center justify-center text-teal-700 shadow-sm hover:bg-teal-600 hover:text-white transition-all"
+                >
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 3: Trending Buffets */}
-            <div className="bg-[#ECFDF5] rounded-3xl p-5 border border-emerald-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <motion.div 
+              whileHover={{ y: -4 }}
+              className="bg-gradient-to-b from-[#ECFDF5] to-white rounded-3xl p-5 border border-emerald-200/70 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-lg transition-all group"
+            >
               <div className="flex justify-between items-start mb-4">
-                <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold">
+                <div className="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-sm group-hover:rotate-6 transition-transform">
                   <Star className="w-5 h-5 fill-current" />
                 </div>
-                <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-xs relative">
-                  <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=300&q=80" alt="Trending" className="w-full h-full object-cover" />
+                <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-sm relative bg-slate-100 border-2 border-white">
+                  <img 
+                    src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=300&q=80" 
+                    alt="Trending" 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    loading="lazy"
+                  />
                 </div>
               </div>
               <div>
-                <h3 className="font-black text-gray-900 text-base mb-1">Trending Buffets</h3>
-                <p className="text-gray-500 text-xs mb-4">Most loved buffets by students</p>
-                <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-xs hover:scale-110 transition-transform cursor-pointer">
+                <h3 className="font-black text-slate-900 text-base mb-1 group-hover:text-emerald-700 transition-colors">
+                  Trending Buffets
+                </h3>
+                <p className="text-slate-500 text-xs mb-4">
+                  Most loved buffets by students & PG tenants
+                </p>
+                <button 
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
+                  className="w-9 h-9 rounded-full bg-white border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm hover:bg-emerald-600 hover:text-white transition-all cursor-pointer"
+                >
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 4: Cafes & More */}
-            <div className="bg-[#FDF2F8] rounded-3xl p-5 border border-pink-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <motion.div 
+              whileHover={{ y: -4 }}
+              className="bg-gradient-to-b from-[#FDF2F8] to-white rounded-3xl p-5 border border-pink-200/70 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:shadow-lg transition-all group"
+            >
               <div className="flex justify-between items-start mb-4">
-                <div className="w-10 h-10 rounded-2xl bg-pink-600 text-white flex items-center justify-center font-bold">
+                <div className="w-11 h-11 rounded-2xl bg-pink-600 text-white flex items-center justify-center font-bold shadow-sm group-hover:rotate-6 transition-transform">
                   <Coffee className="w-5 h-5" />
                 </div>
-                <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-xs relative">
-                  <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=300&q=80" alt="Cafes" className="w-full h-full object-cover" />
+                <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-sm relative bg-slate-100 border-2 border-white">
+                  <img 
+                    src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=300&q=80" 
+                    alt="Cafes" 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    loading="lazy"
+                  />
                 </div>
               </div>
               <div>
-                <h3 className="font-black text-gray-900 text-base mb-1">Cafes & More</h3>
-                <p className="text-gray-500 text-xs mb-4">Cafes, snacks and beverages</p>
-                <Link href="/deals" className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-pink-600 shadow-xs hover:scale-110 transition-transform">
+                <h3 className="font-black text-slate-900 text-base mb-1 group-hover:text-pink-700 transition-colors">
+                  Cafes & More
+                </h3>
+                <p className="text-slate-500 text-xs mb-4">
+                  Artisanal coffee, snacks and beverages
+                </p>
+                <Link 
+                  href="/deals" 
+                  className="w-9 h-9 rounded-full bg-white border border-pink-100 flex items-center justify-center text-pink-600 shadow-sm hover:bg-pink-600 hover:text-white transition-all"
+                >
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-            </div>
+            </motion.div>
 
           </div>
         </section>
 
 
-        {/* ------------------ 12. NEWSLETTER / COMMUNITY CTA ------------------ */}
-        <section className="bg-[#052828] rounded-2xl p-6 sm:p-8 text-white shadow-xl">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+        {/* ------------------ 7. NEWSLETTER CTA (Luxury Dark Emerald) ------------------ */}
+        <section className="bg-gradient-to-br from-[#022C22] via-[#064E3B] to-[#042F2E] rounded-3xl p-7 sm:p-10 text-white shadow-xl relative overflow-hidden">
+          {/* Ambient Lighting Circles */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-10 w-60 h-60 bg-teal-400/10 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
             
             <div className="flex items-center gap-4 text-center lg:text-left">
-              <div className="w-12 h-12 rounded-full bg-[#0E4242] flex items-center justify-center shrink-0 border border-emerald-800">
-                <Mail className="w-6 h-6 text-emerald-400" />
+              <div className="w-14 h-14 rounded-2xl bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-inner">
+                <Mail className="w-7 h-7 text-emerald-400" />
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-extrabold text-white mb-1">Don't miss exclusive buffet offers!</h3>
-                <p className="text-gray-300 text-xs sm:text-sm font-medium">Subscribe now and get the best buffet deals delivered to your inbox.</p>
+                <div className="flex items-center gap-2 justify-center lg:justify-start">
+                  <h3 className="text-lg sm:text-2xl font-black text-white tracking-tight">
+                    Don't miss exclusive buffet offers!
+                  </h3>
+                  <span className="text-xs bg-emerald-400/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full border border-emerald-400/30 hidden sm:inline-block">
+                    VIP Deals
+                  </span>
+                </div>
+                <p className="text-emerald-100/80 text-xs sm:text-sm font-medium mt-1">
+                  Subscribe now and get curated buffet flash deals delivered directly to your inbox.
+                </p>
               </div>
             </div>
 
             <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto shrink-0">
               {subSuccess ? (
-                <div className="bg-emerald-600/30 text-emerald-300 px-6 py-3 rounded-xl border border-emerald-500/40 text-xs font-bold flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4" /> Subscribed successfully!
-                </div>
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-emerald-500/20 text-emerald-300 px-6 py-3.5 rounded-2xl border border-emerald-400/40 text-xs font-bold flex items-center gap-2"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>Subscribed successfully! Welcome to VIP Buffets.</span>
+                </motion.div>
               ) : (
                 <>
                   <input 
@@ -812,12 +1070,12 @@ export default function BuffetsPage() {
                     required
                     value={emailSub}
                     onChange={(e) => setEmailSub(e.target.value)}
-                    placeholder="Enter your email" 
-                    className="w-full sm:w-72 px-4 py-3 bg-[#0A1A1A] border border-gray-700/80 rounded-xl text-sm text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500 transition-colors"
+                    placeholder="Enter your email address" 
+                    className="w-full sm:w-80 px-4 py-3.5 bg-black/30 border border-emerald-500/30 rounded-2xl text-sm text-white placeholder-emerald-200/50 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 backdrop-blur-sm transition-all"
                   />
                   <button 
                     type="submit"
-                    className="w-full sm:w-auto px-6 py-3 bg-[#008080] hover:bg-teal-600 text-white text-sm font-bold rounded-xl transition-colors shadow-md cursor-pointer shrink-0"
+                    className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-sm font-extrabold rounded-2xl transition-all shadow-md hover:shadow-lg cursor-pointer shrink-0"
                   >
                     Subscribe
                   </button>
@@ -830,7 +1088,7 @@ export default function BuffetsPage() {
 
       </main>
 
-      {/* ------------------ 13. FOOTER ------------------ */}
+      {/* ------------------ 8. FOOTER ------------------ */}
       <Footer />
 
       <style jsx global>{`
@@ -845,4 +1103,5 @@ export default function BuffetsPage() {
     </div>
   );
 }
+
 

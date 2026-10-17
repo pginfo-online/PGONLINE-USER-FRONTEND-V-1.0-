@@ -18,6 +18,9 @@ import {
   Home,
   Store,
   Compass,
+  Users,
+  Utensils,
+  Tag,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useUIStore } from "../lib/store/uiStore";
@@ -63,10 +66,13 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { label: "Explore All", href: "/explore", icon: <Compass className="w-4 h-4" /> },
-    { label: "PGs & Co-Living", href: "/explore?category=pg", icon: <Home className="w-4 h-4" /> },
+    { label: "Explore", href: "/explore", icon: <Compass className="w-4 h-4" /> },
+    { label: "PGs", href: "/explore?category=pg", icon: <Home className="w-4 h-4" /> },
     { label: "Rental Flats", href: "/explore?category=residential_rental", icon: <Building className="w-4 h-4" /> },
     { label: "Commercial", href: "/explore?category=commercial", icon: <Store className="w-4 h-4" /> },
+    { label: "Buffets", href: "/buffets", icon: <Utensils className="w-4 h-4" /> },
+    { label: "Deals", href: "/deals", icon: <Tag className="w-4 h-4" /> },
+    { label: "Circle & Meetups", href: "/circle", icon: <Users className="w-4 h-4" /> },
   ];
 
   const userObj = (user as any)?.user || user;

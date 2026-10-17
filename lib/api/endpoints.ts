@@ -37,4 +37,15 @@ export const API_ENDPOINTS = {
 
   // Notifications
   NOTIFICATIONS: '/notifications',
+
+  // Meetups & Circles
+  MEETUPS: '/meetups',
+  MEETUP_BY_ID: (id: string) => `/meetups/${id}`,
+  MEETUP_CATEGORIES: '/meetup-categories',
+  MEETUP_JOIN: (id: string) => `/meetups/${id}/join`,
+  MEETUP_INTEREST: (id: string) => `/meetups/${id}/interest`,
+
+  // Buffets & Hot Deals
+  BUFFETS: '/buffet',
+  HOT_DEALS: '/hot-deals',
 } as const;

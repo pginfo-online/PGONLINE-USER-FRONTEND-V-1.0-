@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Home, Shield, User, Building, Store } from "lucide-react";
+import { Home, Shield, User, Building, Store, Users } from "lucide-react";
 
 export default function CategorySection() {
   const categories = [
@@ -41,6 +41,13 @@ export default function CategorySection() {
       href: "/explore?category=commercial",
       icon: <Store className="w-5 h-5 text-amber-600" />,
       bg: "bg-amber-50",
+    },
+    {
+      title: "Circle & Meetups",
+      desc: "Events, friends & groups",
+      href: "/circle",
+      icon: <Users className="w-5 h-5 text-indigo-600" />,
+      bg: "bg-indigo-50",
     },
   ];
 

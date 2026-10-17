@@ -31,8 +31,12 @@ export class ApiError extends Error {
 export const getBaseApiUrl = (): string => {
   let url = (
     process.env.NEXT_PUBLIC_API_URL ||
-    'https://pgonline-backend-v-1-0.onrender.com/api/v1'
+    'https://pginfo.business/api/v1'
   ).trim().replace(/\/+$/, '');
+
+  if (url === '/api/proxy') {
+    return '/api/proxy';
+  }
 
   if (!url.endsWith('/api/v1')) {
     if (url.endsWith('/api')) {

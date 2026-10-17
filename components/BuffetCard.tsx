@@ -1,120 +1,239 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, MapPin, Clock, Star, Flame, Crown } from 'lucide-react';
-import Image from 'next/image';
+import { Heart, MapPin, Clock, Star, Flame, Crown, Sparkles, ArrowUpRight } from 'lucide-react';
 
 interface BuffetCardProps {
-  buffet: any; // We'll type this properly later or just use any for now
+  buffet: any;
   index: number;
 }
 
 export default function BuffetCard({ buffet, index }: BuffetCardProps) {
-  // Define themes based on index for the colorful variations seen in the app
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // Modern pastel theme variations tailored to culinary aesthetics
   const themes = [
-    { bg: 'bg-[#f0fdfa]', strip: 'bg-[#0f766e]', text: 'text-[#0f766e]', badge: 'bg-[#0f766e]' }, // Teal
-    { bg: 'bg-[#f4f0ff]', strip: 'bg-[#7c4dff]', text: 'text-[#7c4dff]', badge: 'bg-[#7c4dff]' }, // Purple
-    { bg: 'bg-[#ecfdf5]', strip: 'bg-[#10b981]', text: 'text-[#10b981]', badge: 'bg-[#10b981]' }, // Green
-    { bg: 'bg-[#fffbeb]', strip: 'bg-[#f59e0b]', text: 'text-[#f59e0b]', badge: 'bg-[#f59e0b]' }, // Yellow
+    {
+      cardBg: 'bg-gradient-to-b from-[#F0FDFA] via-[#F8FFFE] to-white',
+      border: 'border-teal-100/80 hover:border-teal-300',
+      shadow: 'hover:shadow-[0_20px_40px_-15px_rgba(15,118,110,0.15)]',
+      halo: 'border-teal-200/50',
+      badge: 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white',
+      pillBg: 'bg-teal-500/10 text-teal-700',
+      strip: 'bg-gradient-to-r from-teal-700 via-teal-600 to-emerald-600',
+      accentDot: 'bg-teal-500',
+    },
+    {
+      cardBg: 'bg-gradient-to-b from-[#F5F3FF] via-[#FAF8FF] to-white',
+      border: 'border-purple-100/80 hover:border-purple-300',
+      shadow: 'hover:shadow-[0_20px_40px_-15px_rgba(124,77,255,0.15)]',
+      halo: 'border-purple-200/50',
+      badge: 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white',
+      pillBg: 'bg-purple-500/10 text-purple-700',
+      strip: 'bg-gradient-to-r from-purple-700 via-indigo-600 to-purple-600',
+      accentDot: 'bg-purple-500',
+    },
+    {
+      cardBg: 'bg-gradient-to-b from-[#ECFDF5] via-[#F6FEFA] to-white',
+      border: 'border-emerald-100/80 hover:border-emerald-300',
+      shadow: 'hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.15)]',
+      halo: 'border-emerald-200/50',
+      badge: 'bg-gradient-to-r from-emerald-600 to-green-600 text-white',
+      pillBg: 'bg-emerald-500/10 text-emerald-700',
+      strip: 'bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600',
+      accentDot: 'bg-emerald-500',
+    },
+    {
+      cardBg: 'bg-gradient-to-b from-[#FFFBEB] via-[#FFFEF7] to-white',
+      border: 'border-amber-100/80 hover:border-amber-300',
+      shadow: 'hover:shadow-[0_20px_40px_-15px_rgba(245,158,11,0.15)]',
+      halo: 'border-amber-200/50',
+      badge: 'bg-gradient-to-r from-amber-600 to-orange-500 text-white',
+      pillBg: 'bg-amber-500/10 text-amber-700',
+      strip: 'bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600',
+      accentDot: 'bg-amber-500',
+    },
   ];
+
   const theme = themes[index % themes.length];
 
-  // Determine badge based on food type or other props
+  // Dynamic status badges
   const getBadge = () => {
-    if (buffet.foodType === 'veg') return { label: 'Veg', icon: '🥦', color: 'bg-green-600' };
-    if (index % 3 === 0) return { label: 'Popular', icon: <Flame className="w-3.5 h-3.5 fill-white text-white" />, color: 'bg-green-600' };
-    if (index % 4 === 0) return { label: 'Special', icon: <Crown className="w-3.5 h-3.5 fill-white text-white" />, color: 'bg-[#b45309]' };
-    return { label: 'New', icon: null, color: 'bg-purple-600' };
+    if (buffet.foodType === 'veg') {
+      return { label: 'Veg Only', icon: '🥦', color: 'bg-emerald-600' };
+    }
+    if (index % 4 === 0) {
+      return { label: 'Popular', icon: <Flame className="w-3.5 h-3.5 fill-white text-white" />, color: 'bg-emerald-600' };
+    }
+    if (index % 4 === 1) {
+      return { label: 'New Spread', icon: <Sparkles className="w-3.5 h-3.5 text-white" />, color: 'bg-purple-600' };
+    }
+    if (index % 4 === 2) {
+      return { label: 'Pure Veg', icon: '🥦', color: 'bg-emerald-600' };
+    }
+    return { label: 'Chef Pick', icon: <Crown className="w-3.5 h-3.5 fill-white text-white" />, color: 'bg-amber-600' };
   };
+
   const badge = getBadge();
 
-  // Fallback image if none
-  const imageUrl = buffet.images && buffet.images.length > 0 ? buffet.images[0].url : 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=600';
-  const hotelName = buffet.hotel?.name || 'Hotel Name';
-  const location = `${buffet.hotel?.area || 'Area'}, ${buffet.hotel?.city || 'City'}`;
-  const rating = buffet.hotel?.avgRating || 4.2;
+  // Primary image fallback
+  const fallbackImages = [
+    '/assets/images/buffet-1.jpg',
+    '/assets/images/buffet-2.jpg',
+    '/assets/images/buffet-3.jpg',
+    '/assets/images/buffet-4.jpg'
+  ];
+  const imageUrl =
+    (buffet.images && buffet.images.length > 0 && buffet.images[0]?.url)
+      ? buffet.images[0].url
+      : fallbackImages[index % fallbackImages.length];
+
+  const hotelName = buffet.hotel?.name || 'Grand Dining Hotel';
+  const location = `${buffet.hotel?.area || 'Koregaon Park'}, ${buffet.hotel?.city || 'Pune'}`;
+  const rating = buffet.hotel?.avgRating || (4.5 + (index % 5) * 0.1).toFixed(1);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      className={`relative rounded-3xl overflow-hidden flex flex-col shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer ${theme.bg}`}
+      transition={{ duration: 0.45, delay: index * 0.08, ease: [0.21, 0.47, 0.32, 0.98] }}
+      whileHover={{ y: -6 }}
+      className={`group relative rounded-3xl overflow-hidden flex flex-col border transition-all duration-300 ${theme.cardBg} ${theme.border} ${theme.shadow} shadow-[0_4px_20px_rgba(0,0,0,0.03)] cursor-pointer`}
     >
-      {/* Top Section - Badges & Heart */}
-      <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-20">
-        <div className={`px-3 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1.5 shadow-sm ${badge.color}`}>
+      {/* Background Decorative Rings */}
+      <div className="absolute top-0 right-0 w-36 h-36 bg-gradient-to-br from-white/60 to-transparent rounded-full -mr-12 -mt-12 pointer-events-none blur-xl" />
+      <div className={`absolute top-16 left-3 w-16 h-16 rounded-full border border-dashed ${theme.halo} pointer-events-none opacity-40`} />
+
+      {/* Top Header Controls: Badge & Favorite Button */}
+      <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-20">
+        <span className={`px-3 py-1 rounded-full text-[11px] font-extrabold flex items-center gap-1.5 shadow-sm tracking-wide ${badge.color} text-white`}>
           {badge.icon && <span>{badge.icon}</span>}
-          {badge.label}
+          <span>{badge.label}</span>
+        </span>
+
+        <motion.button
+          type="button"
+          whileTap={{ scale: 0.82 }}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsFavorite(!isFavorite);
+          }}
+          className={`w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-sm ${
+            isFavorite 
+              ? 'bg-red-50 text-red-500 shadow-red-200 border border-red-200' 
+              : 'bg-white/90 hover:bg-white text-gray-400 hover:text-red-500 border border-gray-100 hover:shadow-md'
+          }`}
+          title={isFavorite ? 'Remove from favorites' : 'Save to favorites'}
+        >
+          <Heart className={`w-4 h-4 transition-colors ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
+        </motion.button>
+      </div>
+
+      {/* Hero Circular Dish Visual */}
+      <div className="pt-12 px-6 pb-3 relative z-10 flex justify-center">
+        <div className="relative">
+          {/* Subtle Rotating Halo Ring on Card Hover */}
+          <div className="absolute inset-[-6px] rounded-full border-2 border-dashed border-gray-200/80 group-hover:border-emerald-400/80 transition-colors duration-500 group-hover:rotate-45" />
+
+          {/* Dish Platter */}
+          <div className="w-44 h-44 sm:w-48 sm:h-48 rounded-full overflow-hidden shadow-[0_12px_28px_-6px_rgba(0,0,0,0.16)] border-4 border-white relative bg-slate-100 transition-transform duration-500">
+            <img
+              src={imageUrl}
+              alt={buffet.name}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+              loading="lazy"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = fallbackImages[index % fallbackImages.length];
+              }}
+            />
+            {/* Dish Surface Glare Accent */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-black/10 via-transparent to-white/20 pointer-events-none" />
+          </div>
         </div>
-        <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 hover:text-red-500 hover:scale-110 transition-all">
-          <Heart className="w-4 h-4" />
-        </button>
       </div>
 
-      {/* Decorative background vectors (Subtle flowers/leaves) */}
-      <div className="absolute top-10 left-2 opacity-10">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
-      </div>
-      <div className="absolute top-20 right-4 opacity-10">
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/></svg>
-      </div>
-
-      {/* Circular Image Container */}
-      <div className="pt-14 px-6 pb-2 relative z-10 flex justify-center">
-        <div className="w-full aspect-square max-w-[200px] rounded-full overflow-hidden shadow-xl border-4 border-white/50 relative bg-black/5">
-          {/* Using standard img tag with absolute positioning to perfectly match Next.js fill behavior */}
-          <img 
-            src={imageUrl} 
-            alt={buffet.name} 
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 text-transparent" 
-          />
-        </div>
-      </div>
-
-      {/* Content Section */}
-      <div className="px-5 pb-5 pt-2 flex flex-col gap-1.5 flex-1 relative z-10">
-        <h3 className="font-bold text-gray-900 text-[18px] leading-tight line-clamp-1">{buffet.name}</h3>
+      {/* Main Details Section */}
+      <div className="px-5 pb-5 pt-1 flex flex-col gap-1.5 flex-1 relative z-10">
         
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-700 font-medium line-clamp-1">{hotelName}</span>
-          <div className="flex items-center gap-1 text-[#f59e0b] font-bold text-xs bg-white/50 px-1.5 py-0.5 rounded">
-            <Star className="w-3 h-3 fill-current" /> {rating}
+        {/* Buffet Name */}
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-extrabold text-slate-900 text-lg leading-snug line-clamp-1 group-hover:text-emerald-700 transition-colors">
+            {buffet.name}
+          </h3>
+          <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0 mt-1 opacity-0 group-hover:opacity-100" />
+        </div>
+
+        {/* Hotel & Rating Row */}
+        <div className="flex items-center justify-between gap-2 text-xs">
+          <div className="flex items-center gap-1.5 truncate">
+            <span className="font-semibold text-slate-700 truncate">{hotelName}</span>
+          </div>
+          <div className="flex items-center gap-1 font-bold text-amber-600 bg-amber-50/90 border border-amber-200/70 px-2 py-0.5 rounded-full shrink-0 shadow-2xs">
+            <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+            <span>{rating}</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 text-gray-500 text-xs mt-0.5">
-          <MapPin className="w-3.5 h-3.5" />
+        {/* Location Pin */}
+        <div className="flex items-center gap-1.5 text-slate-500 text-xs">
+          <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
           <span className="truncate">{location}</span>
         </div>
 
-        {/* Time and Price Pills */}
-        <div className="flex items-center gap-2 mt-4">
-          <div className="flex-1 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-xl flex items-center gap-2 shadow-sm border border-white">
-            <div className={`p-1.5 rounded-full bg-opacity-20 ${theme.bg} ${theme.text}`}>
+        {/* Glassmorphic Time & Price Capsules */}
+        <div className="grid grid-cols-2 gap-2 mt-3 pt-1 border-t border-slate-100/80">
+          
+          {/* Time Capsule */}
+          <div className="bg-white/85 backdrop-blur-md px-3 py-2 rounded-2xl flex items-center gap-2 border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+            <div className={`p-1.5 rounded-xl ${theme.pillBg} shrink-0`}>
               <Clock className="w-3.5 h-3.5" />
             </div>
-            <div className="flex flex-col">
-              <span className="text-[11px] font-bold text-gray-900 leading-none">{buffet.startTime}</span>
-              <span className="text-[9px] text-gray-500 leading-none mt-0.5">- {buffet.endTime}</span>
+            <div className="flex flex-col min-w-0">
+              <span className="text-[11px] font-extrabold text-slate-900 leading-tight truncate">
+                {buffet.startTime || '12:00 PM'}
+              </span>
+              <span className="text-[9px] text-slate-500 font-medium leading-none mt-0.5 truncate">
+                till {buffet.endTime || '3:30 PM'}
+              </span>
             </div>
           </div>
-          
-          <div className="flex-1 bg-white/80 backdrop-blur-sm px-3 py-2 rounded-xl flex items-center gap-2 shadow-sm border border-white">
-            <div className={`p-1.5 rounded-full bg-opacity-20 ${theme.bg} ${theme.text}`}>
-              <span className="font-bold text-[10px] leading-none flex items-center justify-center">₹</span>
+
+          {/* Price Capsule */}
+          <div className="bg-white/85 backdrop-blur-md px-3 py-2 rounded-2xl flex items-center gap-2 border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+            <div className={`p-1.5 rounded-xl ${theme.pillBg} shrink-0 font-black text-xs flex items-center justify-center`}>
+              ₹
             </div>
-            <div className="flex flex-col">
-              <span className="text-[12px] font-bold text-gray-900 leading-none">₹{buffet.pricePerPerson}</span>
-              <span className="text-[9px] text-gray-500 leading-none mt-0.5">/ person</span>
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-baseline gap-0.5">
+                <span className="text-sm font-black text-slate-900 leading-tight">
+                  ₹{buffet.pricePerPerson || buffet.price || 499}
+                </span>
+              </div>
+              <span className="text-[9px] text-slate-500 font-medium leading-none mt-0.5">
+                / person
+              </span>
             </div>
           </div>
+
         </div>
       </div>
 
-      {/* Colored Footer Strip */}
-      <div className={`${theme.strip} text-white px-5 py-2.5 text-[11px] font-medium tracking-wide flex items-center justify-center truncate`}>
-        {buffet.type ? buffet.type.charAt(0).toUpperCase() + buffet.type.slice(1) : 'Buffet'}
-        {buffet.cuisine && buffet.cuisine.length > 0 && ` • ${buffet.cuisine.slice(0, 3).join(' • ')}`}
+      {/* Colored Solid/Gradient Footer Ribbon */}
+      <div className={`${theme.strip} text-white px-5 py-2.5 text-[11px] font-semibold tracking-wide flex items-center justify-between shadow-inner`}>
+        <div className="truncate flex items-center gap-1.5">
+          <span className="uppercase tracking-wider text-[10px] font-extrabold bg-white/20 px-2 py-0.5 rounded-md">
+            {buffet.type ? buffet.type.toUpperCase() : 'BUFFET'}
+          </span>
+          <span className="truncate opacity-95">
+            {buffet.cuisine && buffet.cuisine.length > 0 
+              ? `• ${buffet.cuisine.slice(0, 3).join(' • ')}`
+              : '• Multi-Cuisine Spread'}
+          </span>
+        </div>
+        <span className="text-[10px] uppercase font-bold opacity-0 group-hover:opacity-100 transition-opacity pl-2 shrink-0">
+          Book →
+        </span>
       </div>
     </motion.div>
   );
